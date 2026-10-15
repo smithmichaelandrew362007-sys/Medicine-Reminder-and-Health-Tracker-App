@@ -1,0 +1,527 @@
+/* ==========================================================================
+   MEDICINE REMINDER & HEALTH TRACKER - VIEW SPECIFIC STYLES
+   ========================================================================== */
+
+/* --- 1. Schedule & Today's Doses View --- */
+.adherence-hero {
+  background: linear-gradient(135deg, rgba(13, 148, 136, 0.12), rgba(79, 70, 229, 0.08));
+  border: 1px solid rgba(13, 148, 136, 0.25);
+  border-radius: var(--radius-xl);
+  padding: 24px;
+  margin-bottom: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.adherence-score-box {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.progress-circle-wrap {
+  width: 84px;
+  height: 84px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.progress-circle-svg {
+  transform: rotate(-90deg);
+  width: 84px;
+  height: 84px;
+}
+
+.progress-circle-bg {
+  fill: none;
+  stroke: var(--border-light);
+  stroke-width: 8;
+}
+
+.progress-circle-bar {
+  fill: none;
+  stroke: var(--primary-500);
+  stroke-width: 8;
+  stroke-linecap: round;
+  transition: stroke-dashoffset 0.6s ease;
+}
+
+.progress-text {
+  position: absolute;
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: var(--text-main);
+}
+
+.adherence-info h3 {
+  font-size: 1.35rem;
+  margin-bottom: 4px;
+}
+
+.streak-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: linear-gradient(135deg, #f59e0b, #ef4444);
+  color: #fff;
+  padding: 6px 14px;
+  border-radius: var(--radius-pill);
+  font-size: 0.85rem;
+  font-weight: 700;
+  box-shadow: 0 4px 10px rgba(245, 158, 11, 0.35);
+}
+
+.schedule-filters {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 20px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+}
+
+.filter-chip {
+  padding: 7px 16px;
+  border-radius: var(--radius-pill);
+  background: var(--bg-surface);
+  border: 1px solid var(--border-light);
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all var(--transition-fast);
+}
+
+.filter-chip:hover, .filter-chip.active {
+  background: var(--primary-500);
+  color: #fff;
+  border-color: var(--primary-500);
+  box-shadow: 0 2px 8px rgba(13, 148, 136, 0.25);
+}
+
+/* --- 2. Health Vitals View --- */
+.vitals-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 18px;
+  margin-bottom: 28px;
+}
+
+.vital-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  position: relative;
+  transition: all var(--transition-fast);
+}
+
+.vital-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.vital-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.vital-title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.vital-icon-box {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25rem;
+}
+
+.vital-value-display {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.vital-big-number {
+  font-size: 2.2rem;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.vital-unit {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+.vital-status-chip {
+  padding: 4px 10px;
+  border-radius: var(--radius-pill);
+  font-size: 0.75rem;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  width: fit-content;
+}
+
+.vital-status-chip.normal {
+  background: var(--success-50);
+  color: var(--success-700);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.vital-status-chip.warning {
+  background: var(--warning-50);
+  color: var(--warning-700);
+  border: 1px solid rgba(245, 158, 11, 0.3);
+}
+
+.vital-status-chip.alert {
+  background: var(--danger-50);
+  color: var(--danger-700);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+.chart-section {
+  background: var(--bg-card);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-xl);
+  padding: 24px;
+  margin-bottom: 24px;
+}
+
+.chart-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.chart-tabs {
+  display: flex;
+  gap: 6px;
+  background: var(--bg-subtle);
+  padding: 4px;
+  border-radius: var(--radius-pill);
+}
+
+.chart-tab-btn {
+  padding: 6px 14px;
+  border-radius: var(--radius-pill);
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.chart-tab-btn.active {
+  background: var(--bg-surface);
+  color: var(--primary-600);
+  box-shadow: var(--shadow-xs);
+}
+
+.chart-container-box {
+  position: relative;
+  height: 320px;
+  width: 100%;
+}
+
+/* --- 3. Caregiver Monitoring Portal --- */
+.caregiver-hero {
+  background: linear-gradient(135deg, rgba(79, 70, 229, 0.12), rgba(13, 148, 136, 0.1));
+  border: 1px solid rgba(79, 70, 229, 0.25);
+  border-radius: var(--radius-xl);
+  padding: 24px;
+  margin-bottom: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.patient-profile-snippet {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.patient-avatar {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--indigo-500), var(--primary-500));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 1.6rem;
+  font-weight: 800;
+  box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+}
+
+.alert-feed {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.alert-item {
+  background: var(--bg-card);
+  border-radius: var(--radius-md);
+  padding: 16px;
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  border: 1px solid var(--border-light);
+  border-left: 4px solid var(--info-500);
+  box-shadow: var(--shadow-xs);
+}
+
+.alert-item.critical {
+  border-left-color: var(--danger-500);
+  background: linear-gradient(to right, rgba(239, 68, 68, 0.05), var(--bg-card));
+}
+
+.alert-item.warning {
+  border-left-color: var(--warning-500);
+  background: linear-gradient(to right, rgba(245, 158, 11, 0.05), var(--bg-card));
+}
+
+.alert-icon {
+  font-size: 1.3rem;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.alert-content {
+  flex: 1;
+}
+
+.alert-title {
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: var(--text-main);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.alert-time {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+.alert-desc {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin-top: 4px;
+}
+
+.caregiver-quick-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+/* --- 4. Doctor Appointments View --- */
+.appointment-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 18px;
+}
+
+.appointment-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  box-shadow: var(--shadow-xs);
+  transition: all var(--transition-fast);
+}
+
+.appointment-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.app-badge-countdown {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--indigo-50);
+  color: var(--indigo-700);
+  font-size: 0.8rem;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: var(--radius-pill);
+}
+
+[data-theme="dark"] .app-badge-countdown {
+  background: rgba(99, 102, 241, 0.2);
+  color: #a5b4fc;
+}
+
+/* --- 5. Digital Health Vault (Prescriptions) --- */
+.vault-dropzone {
+  border: 2px dashed var(--border-light);
+  border-radius: var(--radius-xl);
+  padding: 36px 20px;
+  text-align: center;
+  cursor: pointer;
+  background: var(--bg-surface);
+  transition: all var(--transition-fast);
+  margin-bottom: 24px;
+}
+
+.vault-dropzone:hover {
+  border-color: var(--primary-500);
+  background: var(--primary-50);
+}
+
+[data-theme="dark"] .vault-dropzone:hover {
+  background: rgba(13, 148, 136, 0.1);
+}
+
+.doc-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 18px;
+}
+
+.doc-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-xs);
+  transition: all var(--transition-fast);
+  display: flex;
+  flex-direction: column;
+}
+
+.doc-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.doc-thumb {
+  height: 140px;
+  background: var(--bg-subtle);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 3rem;
+  color: var(--text-muted);
+  border-bottom: 1px solid var(--border-light);
+  position: relative;
+}
+
+.doc-thumb-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.doc-details {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: 1;
+}
+
+/* --- 6. Pharmacy & Refill View --- */
+.pharmacy-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 18px;
+}
+
+.pharmacy-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  box-shadow: var(--shadow-xs);
+}
+
+.stock-meter-container {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 8px 0;
+}
+
+.stock-meter-bar {
+  height: 8px;
+  border-radius: var(--radius-pill);
+  background: var(--bg-subtle);
+  overflow: hidden;
+}
+
+.stock-meter-fill {
+  height: 100%;
+  border-radius: var(--radius-pill);
+  background: var(--primary-500);
+  transition: width 0.5s ease;
+}
+
+.stock-meter-fill.low {
+  background: var(--warning-500);
+}
+
+.stock-meter-fill.critical {
+  background: var(--danger-500);
+}
+
+/* --- 7. Printable Health Report View --- */
+@media print {
+  body {
+    background: #fff !important;
+    color: #000 !important;
+  }
+  .top-navbar, .sidebar-nav, .nav-actions, .btn-ghost, .btn-primary, .live-status-ribbon, .toast-container {
+    display: none !important;
+  }
+  .content-area {
+    padding: 0 !important;
+    max-width: 100% !important;
+  }
+  .print-only {
+    display: block !important;
+  }
+  .card, .stat-card, .medicine-card {
+    border: 1px solid #ccc !important;
+    box-shadow: none !important;
+    page-break-inside: avoid;
+  }
+}

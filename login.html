@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CareSync | Sign In — Medicine Reminder & Health Tracker</title>
+  <meta name="description" content="Sign in to CareSync, your personal medicine reminder and health tracking companion. Manage medications, monitor vitals, and connect with caregivers." />
+  <link rel="stylesheet" href="/css/login.css" />
+</head>
+<body>
+  <!-- Full-Screen Login Page -->
+  <div class="login-page" id="login-page">
+
+    <!-- Animated Background Layers -->
+    <div class="login-bg">
+      <div class="login-bg__image"></div>
+      <div class="login-bg__gradient"></div>
+      <div class="login-bg__mesh"></div>
+
+      <!-- Floating Orbs -->
+      <div class="login-bg__orb login-bg__orb--1"></div>
+      <div class="login-bg__orb login-bg__orb--2"></div>
+      <div class="login-bg__orb login-bg__orb--3"></div>
+
+      <!-- Particles -->
+      <div class="login-bg__particles">
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+      </div>
+
+      <!-- Heartbeat Line -->
+      <div class="login-bg__heartbeat">
+        <svg class="heartbeat-svg" viewBox="0 0 2000 60" preserveAspectRatio="none">
+          <path d="M0,30 L150,30 L170,30 L180,10 L190,50 L200,5 L210,55 L220,30 L240,30 L400,30 L420,30 L430,10 L440,50 L450,5 L460,55 L470,30 L490,30 L650,30 L670,30 L680,10 L690,50 L700,5 L710,55 L720,30 L740,30 L900,30 L920,30 L930,10 L940,50 L950,5 L960,55 L970,30 L990,30 L1150,30 L1170,30 L1180,10 L1190,50 L1200,5 L1210,55 L1220,30 L1240,30 L1400,30 L1420,30 L1430,10 L1440,50 L1450,5 L1460,55 L1470,30 L1490,30 L1650,30 L1670,30 L1680,10 L1690,50 L1700,5 L1710,55 L1720,30 L1740,30 L2000,30" />
+        </svg>
+      </div>
+    </div>
+
+    <!-- Neon DB Status Pill (top-right) -->
+    <button class="login-neon-status" id="login-neon-btn" title="Database Connection Status">
+      <span class="login-neon-status__dot" id="login-neon-dot"></span>
+      <span id="login-neon-label">Neon DB: Connecting...</span>
+    </button>
+
+    <!-- Main Login Container -->
+    <div class="login-container">
+
+      <!-- LEFT: Branding Panel -->
+      <div class="login-branding">
+        <div class="branding-logo">
+          <div class="branding-logo__icon">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="m10.5 20.5 10-10a4.95 4.95 0 1 0-7-7l-10 10a4.95 4.95 0 1 0 7 7Z"></path>
+              <path d="m8.5 8.5 7 7"></path>
+            </svg>
+          </div>
+          <div class="branding-logo__text">
+            <h1>CareSync Health</h1>
+            <p>Medicine Reminder & Caregiver Hub</p>
+          </div>
+        </div>
+
+        <div class="branding-headline">
+          <h2>
+            Your personal <span>health companion</span> — always by your side
+          </h2>
+          <p>
+            Never miss a dose. Track your vitals. Keep your caregivers connected.
+            CareSync makes medication management effortless and safe.
+          </p>
+        </div>
+
+        <div class="branding-features">
+          <span class="branding-feature-pill">💊 Smart Reminders</span>
+          <span class="branding-feature-pill">📊 Vitals Tracking</span>
+          <span class="branding-feature-pill">🛡️ Caregiver Alerts</span>
+          <span class="branding-feature-pill">🏥 Doctor Appointments</span>
+          <span class="branding-feature-pill">💊 Pharmacy Refills</span>
+          <span class="branding-feature-pill">🤖 AI Health Insights</span>
+        </div>
+
+        <div class="branding-footer">
+          <span class="branding-footer__dot"></span>
+          <span>HIPAA-Ready Security • End-to-End Encrypted • Neon PostgreSQL</span>
+        </div>
+
+        <!-- Decorative medical cross -->
+        <svg class="branding-deco-cross" viewBox="0 0 200 200" fill="white">
+          <rect x="70" y="0" width="60" height="200" rx="12"/>
+          <rect x="0" y="70" width="200" height="60" rx="12"/>
+        </svg>
+      </div>
+
+      <!-- RIGHT: Auth Forms Panel -->
+      <div class="login-form-panel">
+
+        <!-- Tab Switcher -->
+        <div class="login-tabs">
+          <button class="login-tab active" id="tab-login" data-target="login">
+            <span>🔐 Sign In</span>
+          </button>
+          <button class="login-tab" id="tab-register" data-target="register">
+            <span>✨ Create Account</span>
+          </button>
+        </div>
+
+        <!-- ======================== LOGIN VIEW ======================== -->
+        <div class="login-view active" id="view-login">
+          <div class="login-form-header">
+            <h3>Welcome back</h3>
+            <p>Sign in to access your health dashboard and medication schedule</p>
+          </div>
+
+          <!-- Status Message -->
+          <div class="login-message" id="login-msg"></div>
+
+          <form class="login-form" id="form-login" autocomplete="on">
+            <div class="login-field">
+              <label class="login-label" for="login-username">Username</label>
+              <div class="login-input-wrap">
+                <span class="login-input-icon">👤</span>
+                <input
+                  type="text"
+                  id="login-username"
+                  class="login-input"
+                  placeholder="Enter your username"
+                  autocomplete="username"
+                  required
+                />
+              </div>
+            </div>
+
+            <div class="login-field">
+              <label class="login-label" for="login-password">Password</label>
+              <div class="login-input-wrap">
+                <span class="login-input-icon">🔒</span>
+                <input
+                  type="password"
+                  id="login-password"
+                  class="login-input"
+                  placeholder="••••••••"
+                  autocomplete="current-password"
+                  required
+                />
+                <button type="button" class="login-pw-toggle" id="login-pw-toggle" title="Show password">👁️</button>
+              </div>
+            </div>
+
+            <div class="login-options">
+              <label class="login-remember">
+                <input type="checkbox" id="login-remember" />
+                <span>Remember me</span>
+              </label>
+              <button type="button" class="login-forgot" id="login-forgot-btn">Forgot password?</button>
+            </div>
+
+            <button type="submit" class="login-submit login-submit--primary" id="login-submit-btn">
+              Sign In to CareSync
+            </button>
+          </form>
+
+          <div class="login-divider">
+            <div class="login-divider__line"></div>
+            <span class="login-divider__text">Quick access</span>
+            <div class="login-divider__line"></div>
+          </div>
+
+          <div class="login-social-row">
+            <button class="login-demo-btn" id="demo-login-btn" type="button">
+              <span class="demo-emoji">🧪</span>
+              <span>Demo Patient Login</span>
+            </button>
+            <button class="login-demo-btn" id="demo-caregiver-btn" type="button">
+              <span class="demo-emoji">🛡️</span>
+              <span>Demo Caregiver</span>
+            </button>
+          </div>
+
+          <div class="login-switch">
+            Don't have an account? <button id="switch-to-register">Create one now</button>
+          </div>
+        </div>
+
+        <!-- ======================== REGISTER VIEW ======================== -->
+        <div class="login-view" id="view-register">
+          <div class="login-form-header">
+            <h3>Create your account</h3>
+            <p>Start your personalized health tracking journey today</p>
+          </div>
+
+          <!-- Status Message -->
+          <div class="login-message" id="register-msg"></div>
+
+          <form class="login-form" id="form-register" autocomplete="on">
+            <div class="login-field">
+              <label class="login-label" for="reg-fullname">Full Name</label>
+              <div class="login-input-wrap">
+                <span class="login-input-icon">📝</span>
+                <input
+                  type="text"
+                  id="reg-fullname"
+                  class="login-input"
+                  placeholder="e.g. Margaret Sullivan"
+                  autocomplete="name"
+                  required
+                />
+              </div>
+            </div>
+
+            <div class="login-field">
+              <label class="login-label" for="reg-username">Username</label>
+              <div class="login-input-wrap">
+                <span class="login-input-icon">👤</span>
+                <input
+                  type="text"
+                  id="reg-username"
+                  class="login-input"
+                  placeholder="Choose a unique username"
+                  autocomplete="username"
+                  required
+                />
+              </div>
+            </div>
+
+            <div class="login-field">
+              <label class="login-label" for="reg-email">Email (optional)</label>
+              <div class="login-input-wrap">
+                <span class="login-input-icon">📧</span>
+                <input
+                  type="email"
+                  id="reg-email"
+                  class="login-input"
+                  placeholder="your@email.com"
+                  autocomplete="email"
+                />
+              </div>
+            </div>
+
+            <div class="login-field">
+              <label class="login-label" for="reg-password">Create Password</label>
+              <div class="login-input-wrap">
+                <span class="login-input-icon">🔒</span>
+                <input
+                  type="password"
+                  id="reg-password"
+                  class="login-input"
+                  placeholder="Minimum 6 characters"
+                  autocomplete="new-password"
+                  required
+                  minlength="6"
+                />
+                <button type="button" class="login-pw-toggle" id="reg-pw-toggle" title="Show password">👁️</button>
+              </div>
+              <!-- Password Strength -->
+              <div class="password-strength" id="pw-strength-bars">
+                <div class="password-strength__bar" id="pw-bar-1"></div>
+                <div class="password-strength__bar" id="pw-bar-2"></div>
+                <div class="password-strength__bar" id="pw-bar-3"></div>
+                <div class="password-strength__bar" id="pw-bar-4"></div>
+              </div>
+              <div class="password-strength__text" id="pw-strength-text"></div>
+            </div>
+
+            <div class="login-field">
+              <label class="login-label">I am a...</label>
+              <div class="login-role-selector">
+                <label class="login-role-card selected" id="role-patient-card">
+                  <input type="radio" name="role" value="patient" checked />
+                  <span class="login-role-card__icon">🧑‍⚕️</span>
+                  <span class="login-role-card__label">Patient</span>
+                  <span class="login-role-card__desc">Track my meds & health</span>
+                </label>
+                <label class="login-role-card" id="role-caregiver-card">
+                  <input type="radio" name="role" value="caregiver" />
+                  <span class="login-role-card__icon">🛡️</span>
+                  <span class="login-role-card__label">Caregiver</span>
+                  <span class="login-role-card__desc">Monitor a loved one</span>
+                </label>
+              </div>
+            </div>
+
+            <button type="submit" class="login-submit login-submit--success" id="register-submit-btn">
+              Create Account & Begin Setup →
+            </button>
+          </form>
+
+          <div class="login-switch">
+            Already have an account? <button id="switch-to-login">Sign in here</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="/js/login.js"></script>
+</body>
+</html>

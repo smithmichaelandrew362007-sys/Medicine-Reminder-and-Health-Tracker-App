@@ -1,0 +1,35 @@
+{
+  "name": "medicine-reminder-and-health-tracker",
+  "version": "1.0.0",
+  "description": "Medicine Reminder and Health Tracker desktop and web application",
+  "productName": "Medicine Reminder and Health Tracker App",
+  "main": "electron/main.js",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "server": "node server/index.js",
+    "build": "vite build",
+    "preview": "vite preview",
+    "electron": "electron .",
+    "electron:dev": "concurrently -k \"npm run server\" \"npm run dev\" \"wait-on tcp:5173 && electron .\"",
+    "electron:build": "vite build && electron ."
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "concurrently": "^10.0.6",
+    "electron": "^44.7.2",
+    "vite": "^8.3.4",
+    "wait-on": "^9.5.1"
+  },
+  "dependencies": {
+    "@neondatabase/serverless": "^1.2.0",
+    "canvas-confetti": "^1.9.4",
+    "chart.js": "^4.5.1",
+    "cors": "^2.8.6",
+    "dotenv": "^18.0.8",
+    "express": "^5.3.0",
+    "lucide": "^1.57.0"
+  }
+}

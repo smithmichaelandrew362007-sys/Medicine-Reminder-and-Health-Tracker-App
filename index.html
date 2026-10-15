@@ -1,0 +1,1145 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CareSync | Medicine Reminder & Health Tracker</title>
+  <meta name="description" content="A comprehensive medicine reminder and health tracking application for patients and caregivers with vitals analytics, refill management, and emergency alerts." />
+  
+  <!-- CSS Stylesheets -->
+  <link rel="stylesheet" href="/css/index.css" />
+  <link rel="stylesheet" href="/css/components.css" />
+  <link rel="stylesheet" href="/css/views.css" />
+
+  <!-- Immediate Auth Guard: Redirect unauthenticated visitors directly to login.html -->
+  <script>
+    (function() {
+      try {
+        const saved = localStorage.getItem('MED_HEALTH_TRACKER_DATA_V2');
+        if (!saved) {
+          window.location.replace('/login.html');
+          return;
+        }
+        const state = JSON.parse(saved);
+        if (!state.currentUser || !state.currentUser.id) {
+          window.location.replace('/login.html');
+        }
+      } catch (e) {
+        window.location.replace('/login.html');
+      }
+    })();
+  </script>
+</head>
+<body>
+  <div class="simulator-wrapper" id="simulator-wrapper">
+    <!-- Top Navigation Bar -->
+    <header class="top-navbar">
+      <div class="brand-section">
+        <div class="brand-icon-box">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="m10.5 20.5 10-10a4.95 4.95 0 1 0-7-7l-10 10a4.95 4.95 0 1 0 7 7Z"></path>
+            <path d="m8.5 8.5 7 7"></path>
+          </svg>
+        </div>
+        <div>
+          <div class="brand-name">CareSync Health</div>
+          <div class="brand-tagline">Medicine Reminder & Caregiver Hub</div>
+        </div>
+      </div>
+
+      <!-- Role Switcher -->
+      <div class="role-switch-container">
+        <button class="role-btn active" id="role-btn-patient" title="Switch to Patient View">
+          <span>👤</span> Patient Mode
+        </button>
+        <button class="role-btn" id="role-btn-caregiver" title="Switch to Caregiver Portal">
+          <span>🛡️</span> Caregiver Portal
+        </button>
+      </div>
+
+      <!-- Controls & Quick Actions -->
+      <div class="nav-actions">
+        <!-- Neon PostgreSQL Status -->
+        <button class="neon-status-pill" id="neon-status-badge" title="Configure Neon Database">
+          <span id="neon-status-text">⚡ Neon DB: Click to Connect</span>
+        </button>
+
+        <!-- User Profile & Sign In -->
+        <button class="btn btn-sm btn-secondary" id="btn-open-auth" onclick="window.openAuthModal('login')" style="display:flex;align-items:center;gap:6px;" title="Account / Sign In">
+          <span>👤</span>
+          <span id="user-profile-btn-text">Sign In / Register</span>
+        </button>
+        <button class="icon-btn" id="btn-sign-out" title="Sign Out / Switch Account" onclick="window.signOut()">
+          🚪
+        </button>
+
+        <!-- Live Clock -->
+        <div style="font-size: 0.85rem; font-weight: 700; color: var(--text-muted); padding: 4px 10px; background: var(--bg-subtle); border-radius: var(--radius-pill); display: flex; align-items: center; gap: 6px;">
+          <span>🕒</span>
+          <span id="live-clock-display">--:--:--</span>
+        </div>
+
+        <!-- Web Notification Bell -->
+        <button class="icon-btn" id="btn-request-notifications" title="Enable Web Notifications">
+          🔔
+        </button>
+
+        <!-- Audio Alarm Sound Toggle -->
+        <button class="icon-btn" id="btn-toggle-sound" title="Toggle Alarm Sound">
+          🔊
+        </button>
+
+        <!-- Mobile Simulator Preview Toggle -->
+        <button class="icon-btn" id="btn-toggle-simulator" title="Preview Mobile Phone Frame">
+          📱
+        </button>
+
+        <!-- Dark / Light Mode Toggle -->
+        <button class="icon-btn" id="btn-toggle-theme" title="Toggle Dark/Light Mode">
+          🌙
+        </button>
+      </div>
+    </header>
+
+    <!-- App Body Layout -->
+    <div class="main-layout">
+      <!-- Sidebar Navigation -->
+      <aside class="sidebar-nav">
+        <div style="padding: 4px 12px 14px 12px; font-size: 0.8rem; font-weight: 700; color: var(--text-subtle); text-transform: uppercase; letter-spacing: 0.05em;">
+          Active Profile: <span id="user-role-label" style="color: var(--primary-600);">Eleanor Vance (Patient)</span>
+        </div>
+
+        <button class="nav-item active" data-tab="schedule">
+          <span>💊</span>
+          <span>Daily Schedule</span>
+          <span class="nav-badge" id="due-doses-badge">3</span>
+        </button>
+
+        <button class="nav-item" data-tab="vitals">
+          <span>📊</span>
+          <span>Health Vitals & Trends</span>
+        </button>
+
+        <button class="nav-item" data-tab="caregiver">
+          <span>🛡️</span>
+          <span>Caregiver Portal</span>
+          <span class="nav-badge danger" id="caregiver-badge-count">1</span>
+        </button>
+
+        <button class="nav-item" data-tab="appointments">
+          <span>🩺</span>
+          <span>Doctor Visits</span>
+        </button>
+
+        <button class="nav-item" data-tab="vault">
+          <span>📁</span>
+          <span>Prescriptions & Reports</span>
+        </button>
+
+        <button class="nav-item" data-tab="pharmacy">
+          <span>📦</span>
+          <span>Pharmacy & Refills</span>
+        </button>
+
+        <button class="nav-item" data-tab="insights">
+          <span>🤖</span>
+          <span>AI Health Insights</span>
+        </button>
+
+        <!-- Reset Seed Data Button -->
+        <div style="margin-top: auto; padding-top: 16px; border-top: 1px solid var(--border-light);">
+          <button class="btn btn-sm btn-ghost" id="btn-reset-demo-data" style="width: 100%; font-size: 0.8rem; color: var(--text-muted);">
+            ↺ Reset Demo Data
+          </button>
+        </div>
+      </aside>
+
+      <!-- Main Content Views -->
+      <main class="content-area">
+        <!-- Live Patient Status Ribbon -->
+        <div class="live-status-ribbon">
+          <div class="live-badge-group">
+            <div class="live-pulse-dot"></div>
+            <div>
+              <div id="ribbon-patient-name" style="font-weight: 700; font-size: 0.95rem;">
+                CareSync Health Portal
+              </div>
+              <div id="ribbon-patient-subtext" style="font-size: 0.8rem; color: var(--text-muted);">
+                Sign in or create an account to start your personalized health routine
+              </div>
+            </div>
+          </div>
+          <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+            <button class="btn btn-sm btn-secondary" id="btn-open-log-vital">
+              + Log Vitals
+            </button>
+            <button class="btn btn-sm btn-primary" id="btn-open-add-med">
+              + Add Medicine
+            </button>
+          </div>
+        </div>
+
+        <!-- ==================== VIEW 1: DAILY SCHEDULE ==================== -->
+        <section id="view-schedule" class="view-section">
+          <!-- Adherence Hero Banner -->
+          <div class="adherence-hero">
+            <div class="adherence-score-box">
+              <div class="progress-circle-wrap">
+                <svg class="progress-circle-svg">
+                  <circle class="progress-circle-bg" cx="42" cy="42" r="34"></circle>
+                  <circle class="progress-circle-bar" id="adherence-progress-circle-bar" cx="42" cy="42" r="34" stroke-dasharray="213.6" stroke-dashoffset="85"></circle>
+                </svg>
+                <div class="progress-text" id="adherence-percentage-val">67%</div>
+              </div>
+              <div class="adherence-info">
+                <h3>Today's Medication Adherence</h3>
+                <p id="adherence-ratio-text" style="font-size: 0.9rem; color: var(--text-muted);">2 of 3 doses completed today</p>
+              </div>
+            </div>
+
+            <div style="display: flex; align-items: center; gap: 12px;">
+              <div class="streak-pill">
+                <span>🔥</span>
+                <span id="adherence-streak-count">12 Days Streak!</span>
+              </div>
+              <button class="btn btn-sm btn-secondary" onclick="window.testReminderAlarm('med-1')">
+                🔔 Test Alarm
+              </button>
+            </div>
+          </div>
+
+          <!-- Schedule Filters -->
+          <div class="schedule-filters">
+            <button class="filter-chip active" data-filter="all">All Today (5)</button>
+            <button class="filter-chip" data-filter="morning">🌅 Morning (08:00)</button>
+            <button class="filter-chip" data-filter="afternoon">☀️ Afternoon (13:00)</button>
+            <button class="filter-chip" data-filter="evening">🌇 Evening (20:00)</button>
+            <button class="filter-chip" data-filter="bedtime">🌙 Bedtime (21:30)</button>
+          </div>
+
+          <!-- Dose Cards Container -->
+          <div id="schedule-cards-container">
+            <!-- Populated dynamically via medicines.js -->
+          </div>
+
+          <!-- All Active Medications Manager -->
+          <div style="margin-top: 36px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+              <div>
+                <h3 style="font-size: 1.25rem;">Active Prescribed Medications</h3>
+                <p style="font-size: 0.85rem; color: var(--text-muted);">All continuous and scheduled prescriptions for Eleanor Vance</p>
+              </div>
+              <button class="btn btn-sm btn-primary" onclick="document.getElementById('add-medicine-modal').classList.add('active')">
+                + Add New Prescription
+              </button>
+            </div>
+            <div id="all-medicines-grid" class="stat-grid" style="grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));">
+              <!-- Populated via medicines.js -->
+            </div>
+          </div>
+        </section>
+
+        <!-- ==================== VIEW 2: HEALTH VITALS & TRENDS ==================== -->
+        <section id="view-vitals" class="view-section hidden">
+          <div class="flex-between" style="margin-bottom: 20px;">
+            <div>
+              <h2 style="font-size: 1.5rem;">Health Vitals & Clinical Progress</h2>
+              <p style="font-size: 0.9rem; color: var(--text-muted);">Track blood pressure, blood glucose, weight, temperature, and daily wellness.</p>
+            </div>
+            <button class="btn btn-primary" onclick="document.getElementById('log-vital-modal').classList.add('active')">
+              + Log New Vital Reading
+            </button>
+          </div>
+
+          <!-- Vitals Cards Grid -->
+          <div class="vitals-grid">
+            <!-- Blood Pressure Card -->
+            <div class="vital-card">
+              <div class="vital-header">
+                <div class="vital-title-wrap">
+                  <div class="vital-icon-box" style="background: rgba(239, 68, 68, 0.12); color: var(--danger-500);">
+                    ❤️
+                  </div>
+                  <div>
+                    <h4 style="font-size: 1.05rem;">Blood Pressure</h4>
+                    <span style="font-size: 0.75rem; color: var(--text-muted);">Target &lt; 120/80</span>
+                  </div>
+                </div>
+              </div>
+              <div id="vital-card-bp-val">
+                <!-- Populated via vitals.js -->
+              </div>
+            </div>
+
+            <!-- Blood Sugar Card -->
+            <div class="vital-card">
+              <div class="vital-header">
+                <div class="vital-title-wrap">
+                  <div class="vital-icon-box" style="background: rgba(99, 102, 241, 0.12); color: var(--indigo-500);">
+                    🩸
+                  </div>
+                  <div>
+                    <h4 style="font-size: 1.05rem;">Blood Sugar (Glucose)</h4>
+                    <span style="font-size: 0.75rem; color: var(--text-muted);">Fasting & Post-Meal</span>
+                  </div>
+                </div>
+              </div>
+              <div id="vital-card-sugar-val">
+                <!-- Populated via vitals.js -->
+              </div>
+            </div>
+
+            <!-- Weight & BMI Card -->
+            <div class="vital-card">
+              <div class="vital-header">
+                <div class="vital-title-wrap">
+                  <div class="vital-icon-box" style="background: rgba(16, 185, 129, 0.12); color: var(--success-500);">
+                    ⚖️
+                  </div>
+                  <div>
+                    <h4 style="font-size: 1.05rem;">Body Weight & BMI</h4>
+                    <span style="font-size: 0.75rem; color: var(--text-muted);">Height: 164 cm</span>
+                  </div>
+                </div>
+              </div>
+              <div id="vital-card-weight-val">
+                <!-- Populated via vitals.js -->
+              </div>
+            </div>
+
+            <!-- Body Temperature Card -->
+            <div class="vital-card">
+              <div class="vital-header">
+                <div class="vital-title-wrap">
+                  <div class="vital-icon-box" style="background: rgba(245, 158, 11, 0.12); color: var(--warning-500);">
+                    🌡️
+                  </div>
+                  <div>
+                    <h4 style="font-size: 1.05rem;">Body Temperature</h4>
+                    <span style="font-size: 0.75rem; color: var(--text-muted);">Normal: 98.6°F</span>
+                  </div>
+                </div>
+              </div>
+              <div id="vital-card-temp-val">
+                <!-- Populated via vitals.js -->
+              </div>
+            </div>
+          </div>
+
+          <!-- Interactive Trend Charts Section -->
+          <div class="chart-section">
+            <div class="chart-header">
+              <div>
+                <h3 style="font-size: 1.25rem;">Physiological Trend Analysis</h3>
+                <p style="font-size: 0.85rem; color: var(--text-muted);">Historical telemetry recorded over the past 7 days</p>
+              </div>
+              <div class="chart-tabs">
+                <button class="chart-tab-btn active" data-chart="bp">Blood Pressure</button>
+                <button class="chart-tab-btn" data-chart="sugar">Blood Sugar</button>
+                <button class="chart-tab-btn" data-chart="weight">Weight Trend</button>
+              </div>
+            </div>
+            <div class="chart-container-box">
+              <canvas id="vitals-trend-chart"></canvas>
+            </div>
+          </div>
+
+          <!-- Symptoms & Wellness Log -->
+          <div class="card">
+            <h3 style="font-size: 1.2rem; margin-bottom: 14px;">Recent Wellness & Symptoms Feed</h3>
+            <div id="symptoms-feed-container">
+              <!-- Populated via vitals.js -->
+            </div>
+          </div>
+        </section>
+
+        <!-- ==================== VIEW 3: CAREGIVER PORTAL ==================== -->
+        <section id="view-caregiver" class="view-section hidden">
+          <!-- Caregiver Hero Summary -->
+          <div class="caregiver-hero" id="caregiver-patient-summary">
+            <!-- Populated dynamically via caregiver.js -->
+          </div>
+
+          <!-- Urgent Quick Action Bar -->
+          <div class="card" style="margin-bottom: 24px;">
+            <div class="card-header">
+              <h3 class="card-title">⚡ Caregiver Emergency & Quick Actions</h3>
+            </div>
+            <div class="caregiver-quick-actions">
+              <button class="btn btn-danger" id="btn-emergency-sos">
+                🚨 Trigger Emergency SOS Alert
+              </button>
+              <button class="btn btn-primary" onclick="window.openCallPatientModal()">
+                📞 Call Eleanor
+              </button>
+              <button class="btn btn-secondary" id="btn-send-reminder-sms">
+                💬 Send Reminder SMS
+              </button>
+              <button class="btn btn-secondary" onclick="alert('Calling Dr. Robert Hastings (Cardiology) at +1 (555) 234-8890...')">
+                👨‍⚕️ Contact Primary Doctor
+              </button>
+            </div>
+          </div>
+
+          <!-- Caregiver Real-time Alert Center -->
+          <div style="margin-bottom: 28px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+              <h3 style="font-size: 1.25rem;">Active Health & Adherence Alerts</h3>
+              <span style="font-size: 0.8rem; color: var(--text-muted);">Real-time monitoring engine</span>
+            </div>
+            <div class="alert-feed" id="caregiver-alerts-list">
+              <!-- Populated dynamically via caregiver.js -->
+            </div>
+          </div>
+
+          <!-- Live Activity Feed -->
+          <div class="card">
+            <h3 class="card-title" style="margin-bottom: 14px;">📡 Live Patient Activity Stream</h3>
+            <div id="caregiver-activity-stream">
+              <!-- Populated dynamically via caregiver.js -->
+            </div>
+          </div>
+        </section>
+
+        <!-- ==================== VIEW 4: DOCTOR APPOINTMENTS ==================== -->
+        <section id="view-appointments" class="view-section hidden">
+          <div class="flex-between" style="margin-bottom: 20px;">
+            <div>
+              <h2 style="font-size: 1.5rem;">Doctor Appointments & Reminders</h2>
+              <p style="font-size: 0.9rem; color: var(--text-muted);">Keep your specialist visits organized with automatic reminder countdowns.</p>
+            </div>
+            <button class="btn btn-primary" id="btn-open-add-appointment">
+              + Schedule Doctor Visit
+            </button>
+          </div>
+
+          <div class="appointment-list" id="appointments-grid">
+            <!-- Populated dynamically via appointments.js -->
+          </div>
+        </section>
+
+        <!-- ==================== VIEW 5: DIGITAL HEALTH VAULT ==================== -->
+        <section id="view-vault" class="view-section hidden">
+          <div class="flex-between" style="margin-bottom: 20px;">
+            <div>
+              <h2 style="font-size: 1.5rem;">Prescriptions & Lab Reports Vault</h2>
+              <p style="font-size: 0.9rem; color: var(--text-muted);">Securely store clinical prescriptions, lab results, and diagnostic scans.</p>
+            </div>
+            <button class="btn btn-primary" id="btn-open-upload-doc">
+              + Upload Medical Record
+            </button>
+          </div>
+
+          <!-- Upload Dropzone -->
+          <div class="vault-dropzone" id="vault-dropzone">
+            <input type="file" id="vault-file-input" accept="image/*,application/pdf" style="display: none;" />
+            <div style="font-size: 2.4rem; margin-bottom: 8px;">📄</div>
+            <h4 style="font-size: 1.15rem; margin-bottom: 4px;">Click or Drag & Drop Prescriptions or Reports Here</h4>
+            <p style="font-size: 0.85rem; color: var(--text-muted);">Supports PNG, JPG, or PDF files. Documents are kept securely in your local vault.</p>
+          </div>
+
+          <!-- Documents Grid -->
+          <div class="doc-grid" id="documents-grid">
+            <!-- Populated dynamically via prescriptions.js -->
+          </div>
+        </section>
+
+        <!-- ==================== VIEW 6: PHARMACY & REFILLS ==================== -->
+        <section id="view-pharmacy" class="view-section hidden">
+          <div class="flex-between" style="margin-bottom: 20px;">
+            <div>
+              <h2 style="font-size: 1.5rem;">Pharmacy & Refill Center</h2>
+              <p style="font-size: 0.9rem; color: var(--text-muted);">Pill inventory monitoring, 1-click refills, and local pharmacy directory.</p>
+            </div>
+            <button class="btn btn-primary" onclick="window.openRefillModalForMed('med-2')">
+              📦 1-Click Refill Request
+            </button>
+          </div>
+
+          <!-- Stock Level Gauges -->
+          <h3 style="font-size: 1.25rem; margin-bottom: 12px;">Medication Inventory Levels</h3>
+          <div class="stat-grid" id="pharmacy-inventory-container" style="grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); margin-bottom: 30px;">
+            <!-- Populated dynamically via pharmacy.js -->
+          </div>
+
+          <!-- Recent Refill Orders -->
+          <div style="margin-bottom: 32px;">
+            <h3 style="font-size: 1.25rem; margin-bottom: 12px;">Active Refill Orders</h3>
+            <div id="refill-orders-container">
+              <!-- Populated dynamically via pharmacy.js -->
+            </div>
+          </div>
+
+          <!-- Nearby Pharmacies -->
+          <div>
+            <h3 style="font-size: 1.25rem; margin-bottom: 12px;">Nearby Pharmacies in Metro Area</h3>
+            <div class="pharmacy-grid" id="nearby-pharmacies-grid">
+              <!-- Populated dynamically via pharmacy.js -->
+            </div>
+          </div>
+        </section>
+
+        <!-- ==================== VIEW 7: AI HEALTH INSIGHTS ==================== -->
+        <section id="view-insights" class="view-section hidden">
+          <div class="flex-between" style="margin-bottom: 20px;">
+            <div>
+              <h2 style="font-size: 1.5rem;">AI Health Insights & Clinical Summary</h2>
+              <p style="font-size: 0.9rem; color: var(--text-muted);">Automated adherence analytics, dietary interaction tips, and doctor report generator.</p>
+            </div>
+            <button class="btn btn-primary" id="btn-export-doctor-summary">
+              🖨️ Export Doctor Visit Report (PDF)
+            </button>
+          </div>
+
+          <div style="display:flex; flex-direction:column; gap:16px;" id="ai-insights-cards">
+            <!-- Populated dynamically via ai-insights.js -->
+          </div>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <!-- ==================== MODALS ==================== -->
+
+  <!-- 1. Urgent Reminder Alarm Modal -->
+  <div class="modal-overlay" id="urgent-alarm-modal">
+    <div class="modal-container urgent-alarm-modal">
+      <div class="modal-body" style="padding: 32px 24px;">
+        <div class="alarm-pulsing-bell">
+          🔔
+        </div>
+        <h2 style="font-size: 1.6rem; margin-bottom: 4px;">Time for Medication!</h2>
+        <div id="alarm-med-time" style="font-size: 0.9rem; color: var(--primary-600); font-weight: 700; margin-bottom: 12px;">
+          Scheduled at: 08:00 AM
+        </div>
+
+        <div style="background: var(--bg-surface); border: 1px solid var(--border-light); border-radius: var(--radius-lg); padding: 18px; margin-bottom: 16px;">
+          <h3 id="alarm-med-name" style="font-size: 1.35rem; color: var(--text-main);">Metformin HCl</h3>
+          <div id="alarm-med-dosage" style="font-size: 1rem; color: var(--text-muted); font-weight: 600; margin-top: 2px;">500 mg (Tablet)</div>
+          <div id="alarm-med-instruction" style="font-size: 0.88rem; color: var(--text-muted); margin-top: 8px; font-style: italic;">
+            Take with or immediately after meals with warm water
+          </div>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 10px; width: 100%;">
+          <button class="btn btn-lg btn-success" id="alarm-btn-take" style="font-size: 1.1rem; width: 100%;">
+            ✓ Mark as Taken
+          </button>
+          <div style="display: flex; gap: 10px;">
+            <button class="btn btn-secondary" id="alarm-btn-snooze" style="flex: 1;">
+              ⏰ Snooze 10 Mins
+            </button>
+            <button class="btn btn-ghost text-danger" id="alarm-btn-skip" style="flex: 1;">
+              ✕ Skip Dose
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. Add Medicine Modal -->
+  <div class="modal-overlay" id="add-medicine-modal">
+    <div class="modal-container">
+      <div class="modal-header">
+        <h3 class="modal-title">💊 Schedule New Medication</h3>
+        <button class="btn btn-sm btn-ghost modal-close">✕</button>
+      </div>
+      <form id="add-med-form">
+        <div class="modal-body">
+          <div class="form-group">
+            <label class="form-label">Medicine Name *</label>
+            <input type="text" id="med-input-name" class="form-input" placeholder="e.g. Metformin, Lisinopril, Omeprazole" required />
+          </div>
+
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label class="form-label">Dosage & Unit *</label>
+              <input type="text" id="med-input-dosage" class="form-input" placeholder="e.g. 500 mg, 1 tablet, 10 ml" required />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Medicine Form</label>
+              <select id="med-input-type" class="form-select">
+                <option value="tablet">Tablet</option>
+                <option value="capsule">Capsule</option>
+                <option value="liquid">Liquid Syrup</option>
+                <option value="drops">Drops</option>
+                <option value="inhaler">Inhaler</option>
+                <option value="injection">Injection</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label class="form-label">Scheduled Time *</label>
+              <input type="time" id="med-input-time" class="form-input" value="08:00" required />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Color Identifier</label>
+              <input type="color" id="med-input-color" class="form-input" value="#0d9488" style="height: 42px; padding: 4px;" />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Clinical / Food Instructions</label>
+            <input type="text" id="med-input-instructions" class="form-input" placeholder="e.g. Take after breakfast with water" />
+          </div>
+
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label class="form-label">Total Stock Count</label>
+              <input type="number" id="med-input-stock" class="form-input" value="30" min="1" />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Prescribing Physician</label>
+              <input type="text" id="med-input-prescriber" class="form-input" placeholder="e.g. Dr. Robert Hastings" />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Therapeutic Purpose</label>
+            <input type="text" id="med-input-purpose" class="form-input" placeholder="e.g. Blood pressure regulation" />
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary modal-close">Cancel</button>
+          <button type="submit" class="btn btn-primary">Save & Schedule</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 3. Log Health Vitals Modal -->
+  <div class="modal-overlay" id="log-vital-modal">
+    <div class="modal-container">
+      <div class="modal-header">
+        <h3 class="modal-title">📊 Log Health Data</h3>
+        <button class="btn btn-sm btn-ghost modal-close">✕</button>
+      </div>
+      <form id="log-vital-form">
+        <div class="modal-body">
+          <h4 style="font-size: 0.95rem; color: var(--primary-600); border-bottom: 1px solid var(--border-light); padding-bottom: 4px;">
+            Blood Pressure & Heart Rate
+          </h4>
+          <div class="form-grid-3">
+            <div class="form-group">
+              <label class="form-label">Systolic (mmHg)</label>
+              <input type="number" id="vital-input-systolic" class="form-input" placeholder="120" min="70" max="240" />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Diastolic (mmHg)</label>
+              <input type="number" id="vital-input-diastolic" class="form-input" placeholder="80" min="40" max="150" />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Pulse (bpm)</label>
+              <input type="number" id="vital-input-pulse" class="form-input" placeholder="72" min="40" max="180" />
+            </div>
+          </div>
+
+          <h4 style="font-size: 0.95rem; color: var(--primary-600); border-bottom: 1px solid var(--border-light); padding-bottom: 4px; margin-top: 8px;">
+            Blood Glucose (mg/dL)
+          </h4>
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label class="form-label">Fasting Sugar</label>
+              <input type="number" id="vital-input-fasting" class="form-input" placeholder="105" min="40" max="400" />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Post-Meal Sugar</label>
+              <input type="number" id="vital-input-postmeal" class="form-input" placeholder="140" min="40" max="500" />
+            </div>
+          </div>
+
+          <h4 style="font-size: 0.95rem; color: var(--primary-600); border-bottom: 1px solid var(--border-light); padding-bottom: 4px; margin-top: 8px;">
+            Body Metrics
+          </h4>
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label class="form-label">Weight (kg)</label>
+              <input type="number" step="0.1" id="vital-input-weight" class="form-input" placeholder="68.0" />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Temperature (°F)</label>
+              <input type="number" step="0.1" id="vital-input-temp" class="form-input" placeholder="98.6" />
+            </div>
+          </div>
+
+          <div class="form-group" style="margin-top: 6px;">
+            <label class="form-label">Pain Level (0 = None, 10 = Severe)</label>
+            <input type="range" id="vital-input-pain" min="0" max="10" value="0" class="form-input" oninput="document.getElementById('pain-val-display').textContent = this.value" />
+            <div style="font-size: 0.8rem; color: var(--text-muted); text-align: right;">Selected: <span id="pain-val-display" style="font-weight:700;">0</span> / 10</div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Wellness Notes / Symptoms</label>
+            <input type="text" id="vital-input-notes" class="form-input" placeholder="e.g. Mild knee joint stiffness after waking" />
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary modal-close">Cancel</button>
+          <button type="submit" class="btn btn-primary">Save Readings</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 4. Schedule Doctor Appointment Modal -->
+  <div class="modal-overlay" id="add-appointment-modal">
+    <div class="modal-container">
+      <div class="modal-header">
+        <h3 class="modal-title">🩺 Schedule Doctor Visit</h3>
+        <button class="btn btn-sm btn-ghost modal-close">✕</button>
+      </div>
+      <form id="add-appointment-form">
+        <div class="modal-body">
+          <div class="form-group">
+            <label class="form-label">Doctor Name *</label>
+            <input type="text" id="apt-input-doctor" class="form-input" placeholder="e.g. Dr. Robert Hastings" required />
+          </div>
+
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label class="form-label">Specialty</label>
+              <input type="text" id="apt-input-specialty" class="form-input" placeholder="e.g. Cardiologist, Endocrinologist" />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Clinic / Hospital</label>
+              <input type="text" id="apt-input-clinic" class="form-input" placeholder="e.g. Metro Heart Institute" />
+            </div>
+          </div>
+
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label class="form-label">Date *</label>
+              <input type="date" id="apt-input-date" class="form-input" required />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Time *</label>
+              <input type="text" id="apt-input-time" class="form-input" placeholder="e.g. 10:30 AM" required />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Consultation Type</label>
+            <select id="apt-input-type" class="form-select">
+              <option value="In-person Consultation">In-person Consultation</option>
+              <option value="Telehealth Video Visit">Telehealth Video Visit</option>
+              <option value="Lab Work / Blood Draw">Lab Work / Blood Draw</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Prep Notes / Instructions</label>
+            <input type="text" id="apt-input-notes" class="form-input" placeholder="e.g. Fasting 8 hours prior; bring BP log" />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Clinic Phone Number</label>
+            <input type="text" id="apt-input-phone" class="form-input" placeholder="+1 (555) 000-0000" />
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary modal-close">Cancel</button>
+          <button type="submit" class="btn btn-primary">Schedule Appointment</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 5. Upload Document Modal -->
+  <div class="modal-overlay" id="upload-document-modal">
+    <div class="modal-container">
+      <div class="modal-header">
+        <h3 class="modal-title">📁 Upload Medical Record</h3>
+        <button class="btn btn-sm btn-ghost modal-close">✕</button>
+      </div>
+      <form id="upload-doc-form">
+        <div class="modal-body">
+          <div id="doc-upload-filename" style="font-size: 0.85rem; font-weight: 700; color: var(--primary-600); margin-bottom: 6px;"></div>
+
+          <div class="form-group">
+            <label class="form-label">Document Title *</label>
+            <input type="text" id="upload-input-title" class="form-input" placeholder="e.g. Cardiology Rx Oct 2026, Blood Panel" required />
+          </div>
+
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label class="form-label">Doctor / Issuing Facility</label>
+              <input type="text" id="upload-input-doctor" class="form-input" placeholder="e.g. Dr. Robert Hastings" />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Category</label>
+              <select id="upload-input-category" class="form-select">
+                <option value="Prescription">Prescription</option>
+                <option value="Lab Report">Lab Report</option>
+                <option value="Radiology">Radiology / Imaging</option>
+                <option value="Discharge Summary">Discharge Summary</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Notes & Summary</label>
+            <textarea id="upload-input-notes" class="form-textarea" rows="2" placeholder="e.g. 90-day refill authorized; normal cardiac ultrasound"></textarea>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary modal-close">Cancel</button>
+          <button type="submit" class="btn btn-primary">Save to Vault</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 6. Document Preview Modal -->
+  <div class="modal-overlay" id="document-preview-modal">
+    <div class="modal-container" style="max-width: 700px;">
+      <div class="modal-header">
+        <div>
+          <h3 class="modal-title" id="doc-preview-title">Document Title</h3>
+          <div id="doc-preview-doctor" style="font-size: 0.8rem; color: var(--text-muted);">Doctor Info</div>
+        </div>
+        <button class="btn btn-sm btn-ghost modal-close">✕</button>
+      </div>
+      <div class="modal-body" style="align-items: center;">
+        <img id="doc-preview-image" src="" alt="Document Preview" style="width: 100%; max-height: 420px; object-fit: contain; border-radius: var(--radius-md); border: 1px solid var(--border-light);" />
+        <div id="doc-preview-notes" style="font-size: 0.9rem; color: var(--text-muted); width: 100%; padding: 12px; background: var(--bg-subtle); border-radius: var(--radius-md);">
+          Notes
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary modal-close">Close</button>
+        <button type="button" class="btn btn-primary" onclick="window.openRefillModalForMed('med-1'); document.getElementById('document-preview-modal').classList.remove('active');">
+          Refill Med from this Rx
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 7. 1-Click Refill Modal -->
+  <div class="modal-overlay" id="request-refill-modal">
+    <div class="modal-container">
+      <div class="modal-header">
+        <h3 class="modal-title">📦 1-Click Pharmacy Refill</h3>
+        <button class="btn btn-sm btn-ghost modal-close">✕</button>
+      </div>
+      <form id="request-refill-form">
+        <div class="modal-body">
+          <div class="form-group">
+            <label class="form-label">Select Medication *</label>
+            <select id="refill-select-med" class="form-select">
+              <option value="med-2">Lisinopril 10mg (4 doses left - Urgent)</option>
+              <option value="med-1">Metformin HCl 500mg (18 doses left)</option>
+              <option value="med-4">Atorvastatin 20mg (26 doses left)</option>
+              <option value="med-3">Vitamin D3 2000 IU (42 doses left)</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Fulfillment Pharmacy</label>
+            <select id="refill-select-pharmacy" class="form-select">
+              <option value="ph-1">Walgreens Pharmacy #4102 (0.4 mi away - 24/7)</option>
+              <option value="ph-2">CVS Pharmacy & MinuteClinic (1.2 mi away)</option>
+              <option value="ph-3">St. Jude Community Health Pharmacy (2.1 mi away)</option>
+            </select>
+          </div>
+
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label class="form-label">Delivery Option</label>
+              <select id="refill-select-delivery" class="form-select">
+                <option value="pickup">Curbside / In-Store Pickup</option>
+                <option value="delivery">Free Home Delivery (Same-day)</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Supply Duration</label>
+              <select id="refill-select-days" class="form-select">
+                <option value="30">30-Day Supply</option>
+                <option value="90">90-Day Supply</option>
+              </select>
+            </div>
+          </div>
+
+          <div style="padding: 12px; background: var(--primary-50); border-radius: var(--radius-md); font-size: 0.85rem; color: var(--primary-800);">
+            ✓ Verified Rx on file with Dr. Robert Hastings. Copay estimated: $0.00 (Medicare Part D Covered).
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary modal-close">Cancel</button>
+          <button type="submit" class="btn btn-primary">Confirm & Send Order</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 8. Neon Database Connection Modal -->
+  <div class="modal-overlay" id="neon-config-modal">
+    <div class="modal-container">
+      <div class="modal-header">
+        <h3 class="modal-title">⚡ Connect Neon PostgreSQL Database</h3>
+        <button class="btn btn-sm btn-ghost modal-close">✕</button>
+      </div>
+      <form id="neon-config-form">
+        <div class="modal-body">
+          <p style="font-size: 0.9rem; color: var(--text-muted); line-height: 1.5;">
+            Paste your Neon connection string or database URL. CareSync will automatically verify the connection, create the tables in PostgreSQL, and synchronize all user profiles, medical routines, vitals, and caregiver alerts.
+          </p>
+          <div class="form-group">
+            <label class="form-label">Neon Connection String / DATABASE_URL *</label>
+            <input type="text" id="neon-conn-input" class="form-input" placeholder="postgresql://user:password@ep-xyz.aws.neon.tech/neondb?sslmode=require" required />
+          </div>
+          <div id="neon-modal-status" style="font-size: 0.85rem; font-weight: 700; min-height: 20px;"></div>
+          <div style="padding: 12px; background: var(--bg-subtle); border-radius: var(--radius-md); font-size: 0.8rem; color: var(--text-muted);">
+            💡 <strong>Where to find this:</strong> In your Neon Console dashboard, navigate to your Project Dashboard and copy the connection string under <strong>"Connection Details"</strong>.
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary modal-close">Cancel</button>
+          <button type="submit" class="btn btn-primary">Connect & Sync Database</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 9. User Authentication Modal (Sign In / Register) -->
+  <div class="modal-overlay" id="auth-modal">
+    <div class="modal-container" style="max-width: 480px;">
+      <div class="modal-header">
+        <h3 class="modal-title">🔐 Patient & Caregiver Access</h3>
+        <button class="btn btn-sm btn-ghost modal-close">✕</button>
+      </div>
+      <div class="modal-body" style="padding-bottom: 20px;">
+        <div class="auth-tabs">
+          <button class="auth-tab-btn active" data-auth="login">Sign In</button>
+          <button class="auth-tab-btn" data-auth="register">Create New Account</button>
+        </div>
+
+        <!-- Sign In View -->
+        <div id="auth-login-view">
+          <form id="login-form" style="display:flex; flex-direction:column; gap:14px;">
+            <div class="form-group">
+              <label class="form-label">Username</label>
+              <input type="text" id="login-username" class="form-input" placeholder="e.g. eleanor or your username" required />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Password</label>
+              <input type="password" id="login-password" class="form-input" placeholder="••••••••" required />
+            </div>
+            <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 6px;">
+              Sign In to CareSync
+            </button>
+          </form>
+
+          <div style="margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--border-light); text-align: center;">
+            <div style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 6px;">Don't have an account yet?</div>
+            <button type="button" class="btn btn-sm btn-secondary" onclick="window.openAuthModal('register')" style="width: 100%;">
+              ✨ Create a Fresh Patient Account
+            </button>
+          </div>
+        </div>
+
+        <!-- Register View -->
+        <div id="auth-register-view" class="hidden">
+          <form id="register-form" style="display:flex; flex-direction:column; gap:14px;">
+            <div class="form-group">
+              <label class="form-label">Full Name *</label>
+              <input type="text" id="reg-fullname" class="form-input" placeholder="e.g. Margaret Sullivan" required />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Choose Username *</label>
+              <input type="text" id="reg-username" class="form-input" placeholder="e.g. margaret_s" required />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Create Password *</label>
+              <input type="password" id="reg-password" class="form-input" placeholder="••••••••" required />
+            </div>
+            <button type="submit" class="btn btn-success" style="width: 100%; margin-top: 6px;">
+              Continue to Health Setup →
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 10. Personalized Health Onboarding Wizard Pop-up -->
+  <div class="modal-overlay" id="onboarding-wizard-modal">
+    <div class="modal-container" style="max-width: 620px;">
+      <div class="modal-header">
+        <div>
+          <h3 class="modal-title">✨ Personalize Your Care Routine</h3>
+          <div style="font-size: 0.82rem; color: var(--text-muted);">
+            Welcome, <strong id="onboarding-user-name">Patient</strong>! Tell us about your health profile.
+          </div>
+        </div>
+        <span id="ob-step-indicator" style="font-size: 0.8rem; font-weight: 700; background: var(--bg-subtle); padding: 4px 10px; border-radius: var(--radius-pill);">Step 1 of 4</span>
+      </div>
+
+      <div class="modal-body">
+        <div class="onboarding-progress-bar-wrap">
+          <div class="onboarding-progress-bar" id="ob-progress-bar" style="width: 25%;"></div>
+        </div>
+
+        <!-- Step 1: Biometrics & Demographics -->
+        <div class="ob-step-section" id="ob-step-1">
+          <h4 style="font-size: 1.05rem; margin-bottom: 12px; color: var(--primary-700);">Step 1: Basic Biometrics & Demographics</h4>
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label class="form-label">Full Name</label>
+              <input type="text" id="ob-name-input" class="form-input" placeholder="Your Name" />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Age</label>
+              <input type="number" id="ob-age-input" class="form-input" value="71" min="1" max="120" />
+            </div>
+          </div>
+
+          <div class="form-grid-3" style="margin-top: 12px;">
+            <div class="form-group">
+              <label class="form-label">Gender</label>
+              <select id="ob-gender-select" class="form-select">
+                <option value="Female">Female</option>
+                <option value="Male">Male</option>
+                <option value="Other">Other</option>
+                <option value="Prefer not to say">Prefer not to say</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Height (cm)</label>
+              <input type="number" id="ob-height-input" class="form-input" value="164" />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Weight (kg)</label>
+              <input type="number" id="ob-weight-input" class="form-input" value="68" />
+            </div>
+          </div>
+
+          <div style="margin-top: 14px; display:flex; align-items:center; gap:10px;">
+            <span style="font-size: 0.85rem; color: var(--text-muted);">Calculated Body Mass Index:</span>
+            <span class="ob-bmi-display" id="ob-bmi-display">BMI: 25.3 (Slightly Overweight)</span>
+          </div>
+        </div>
+
+        <!-- Step 2: Medical Conditions & Allergies -->
+        <div class="ob-step-section hidden" id="ob-step-2">
+          <h4 style="font-size: 1.05rem; margin-bottom: 6px; color: var(--primary-700);">Step 2: Medical Conditions & Allergies</h4>
+          <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 12px;">Select all existing health conditions you or your family member are managing:</p>
+
+          <label class="form-label">Chronic Conditions</label>
+          <div class="ob-chip-grid">
+            <button type="button" class="ob-condition-chip" data-condition="Hypertension">❤️ Hypertension (High BP)</button>
+            <button type="button" class="ob-condition-chip" data-condition="Type 2 Diabetes">🩸 Type 2 Diabetes</button>
+            <button type="button" class="ob-condition-chip" data-condition="Asthma">🫁 Asthma / Respiratory</button>
+            <button type="button" class="ob-condition-chip" data-condition="High Cholesterol">🧠 High Cholesterol</button>
+            <button type="button" class="ob-condition-chip" data-condition="Osteoarthritis">🦴 Osteoarthritis / Joint</button>
+            <button type="button" class="ob-condition-chip" data-condition="Heart Disease">🫀 Cardiovascular Disease</button>
+          </div>
+          <div class="form-group" style="margin-top: 8px;">
+            <input type="text" id="ob-custom-condition" class="form-input" placeholder="Other condition (optional)..." />
+          </div>
+
+          <label class="form-label" style="margin-top: 14px;">Known Drug / Food Allergies</label>
+          <div class="ob-chip-grid">
+            <button type="button" class="ob-allergy-chip" data-allergy="Penicillin">🚫 Penicillin</button>
+            <button type="button" class="ob-allergy-chip" data-allergy="Sulfa drugs">🚫 Sulfa Drugs</button>
+            <button type="button" class="ob-allergy-chip" data-allergy="Aspirin">🚫 Aspirin / NSAIDs</button>
+            <button type="button" class="ob-allergy-chip" data-allergy="Latex">🚫 Latex</button>
+          </div>
+          <div class="form-group" style="margin-top: 8px;">
+            <input type="text" id="ob-custom-allergy" class="form-input" placeholder="Other allergy (optional)..." />
+          </div>
+        </div>
+
+        <!-- Step 3: Initial Medications & Routine -->
+        <div class="ob-step-section hidden" id="ob-step-3">
+          <h4 style="font-size: 1.05rem; margin-bottom: 6px; color: var(--primary-700);">Step 3: Initial Medications Routine</h4>
+          <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 12px;">Add your primary daily medications (you can always add more later):</p>
+
+          <div style="background: var(--bg-subtle); padding: 14px; border-radius: var(--radius-md); margin-bottom: 12px;">
+            <div style="font-weight: 700; font-size: 0.9rem; margin-bottom: 8px;">Medication #1 (e.g. Morning)</div>
+            <div class="form-grid-3">
+              <div class="form-group">
+                <label class="form-label">Name</label>
+                <input type="text" id="ob-med1-name" class="form-input" placeholder="e.g. Metformin" value="Metformin HCl" />
+              </div>
+              <div class="form-group">
+                <label class="form-label">Dosage</label>
+                <input type="text" id="ob-med1-dosage" class="form-input" placeholder="e.g. 500 mg" value="500 mg" />
+              </div>
+              <div class="form-group">
+                <label class="form-label">Time</label>
+                <input type="time" id="ob-med1-time" class="form-input" value="08:00" />
+              </div>
+            </div>
+          </div>
+
+          <div style="background: var(--bg-subtle); padding: 14px; border-radius: var(--radius-md);">
+            <div style="font-weight: 700; font-size: 0.9rem; margin-bottom: 8px;">Medication #2 (e.g. Evening / Optional)</div>
+            <div class="form-grid-3">
+              <div class="form-group">
+                <label class="form-label">Name</label>
+                <input type="text" id="ob-med2-name" class="form-input" placeholder="e.g. Atorvastatin" value="Atorvastatin" />
+              </div>
+              <div class="form-group">
+                <label class="form-label">Dosage</label>
+                <input type="text" id="ob-med2-dosage" class="form-input" placeholder="e.g. 20 mg" value="20 mg" />
+              </div>
+              <div class="form-group">
+                <label class="form-label">Time</label>
+                <input type="time" id="ob-med2-time" class="form-input" value="20:00" />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 4: Caregiver Link -->
+        <div class="ob-step-section hidden" id="ob-step-4">
+          <h4 style="font-size: 1.05rem; margin-bottom: 6px; color: var(--primary-700);">Step 4: Linked Family Member / Caregiver</h4>
+          <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 12px;">Who should be notified if a dose is missed or if health vitals spike?</p>
+
+          <div class="form-group">
+            <label class="form-label">Caregiver Name</label>
+            <input type="text" id="ob-cg-name" class="form-input" placeholder="e.g. Sarah Vance" value="Sarah Vance" />
+          </div>
+
+          <div class="form-grid-2" style="margin-top: 10px;">
+            <div class="form-group">
+              <label class="form-label">Relationship</label>
+              <input type="text" id="ob-cg-rel" class="form-input" placeholder="e.g. Daughter / Son / Spouse" value="Daughter / Primary Caregiver" />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Emergency Phone Number</label>
+              <input type="text" id="ob-cg-phone" class="form-input" placeholder="+1 (555) 382-9910" value="+1 (555) 382-9910" />
+            </div>
+          </div>
+
+          <div style="margin-top: 14px; padding: 12px; background: var(--success-50); border-radius: var(--radius-md); font-size: 0.85rem; color: var(--success-700);">
+            ✓ All health data and schedules will be safely stored and personalized.
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary hidden" id="ob-btn-prev">← Previous</button>
+        <button type="button" class="btn btn-primary" id="ob-btn-next">Next Step →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div class="toast-container" id="toast-container"></div>
+
+  <!-- Printable Clinical Summary Report (Hidden on Screen, Shown on window.print()) -->
+  <div class="print-only hidden" id="printable-health-report"></div>
+
+  <!-- JavaScript Modules -->
+  <script type="module" src="/js/app.js"></script>
+</body>
+</html>
