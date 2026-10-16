@@ -401,8 +401,15 @@ app.post('/api/onboarding', async (req, res) => {
 });
 
 const PORT = process.env.PORT || 3001;
-app.listen(PORT, async () => {
-  console.log(`🚀 CareSync Backend API running on http://localhost:${PORT}`);
-  // Attempt Neon connection if URL present
-  await initDatabase();
-});
+if (!process.env.VERCEL) {
+  app.listen(PORT, async () => {
+    console.log(`🚀 CareSync Backend API running on http://localhost:${PORT}`);
+    // Attempt Neon connection if URL present
+    await initDatabase();
+  });
+} else {
+  initDatabase().catch(err => console.warn('Serverless Neon init:', err.message));
+}
+
+export default app;
+
