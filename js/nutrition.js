@@ -87,24 +87,58 @@ export function openBodyQuestionnaire() {
     initialMedicines: state.medicines || []
   };
 
+  // Helper formatters
+  const formatHeight = (cm) => {
+    const totalInches = cm / 2.54;
+    const feet = Math.floor(totalInches / 12);
+    const inches = Math.round(totalInches % 12);
+    return `${cm} cm • ${feet}' ${inches}"`;
+  };
+
+  const formatWeight = (kg) => {
+    const lbs = (kg * 2.20462).toFixed(1);
+    return `${parseFloat(kg).toFixed(1)} kg • ${lbs} lbs`;
+  };
+
+  const approximateDobFromAge = (age) => {
+    const yr = new Date().getFullYear() - (parseInt(age, 10) || 70);
+    return `${yr}-06-15`;
+  };
+
   // Populate inputs
   const nameInput = document.getElementById('bq-name-input');
   if (nameInput) nameInput.value = questionnaireData.fullName;
 
   const ageInput = document.getElementById('bq-age-input');
+  const ageBadge = document.getElementById('bq-age-badge');
+  const dobInput = document.getElementById('bq-dob-input');
   if (ageInput) ageInput.value = questionnaireData.age;
+  if (ageBadge) ageBadge.textContent = `${questionnaireData.age} yrs`;
+  if (dobInput) dobInput.value = approximateDobFromAge(questionnaireData.age);
 
   const genderSelect = document.getElementById('bq-gender-select');
   if (genderSelect) genderSelect.value = questionnaireData.gender;
 
   const heightInput = document.getElementById('bq-height-input');
+  const heightRange = document.getElementById('bq-height-range');
+  const heightBadge = document.getElementById('bq-height-badge');
   if (heightInput) heightInput.value = questionnaireData.heightCm;
+  if (heightRange) heightRange.value = questionnaireData.heightCm;
+  if (heightBadge) heightBadge.textContent = formatHeight(questionnaireData.heightCm);
 
   const weightInput = document.getElementById('bq-weight-input');
+  const weightRange = document.getElementById('bq-weight-range');
+  const weightBadge = document.getElementById('bq-weight-badge');
   if (weightInput) weightInput.value = questionnaireData.weightKg;
+  if (weightRange) weightRange.value = questionnaireData.weightKg;
+  if (weightBadge) weightBadge.textContent = formatWeight(questionnaireData.weightKg);
 
   const targetWeightInput = document.getElementById('bq-target-weight-input');
+  const targetWeightRange = document.getElementById('bq-target-weight-range');
+  const targetWeightBadge = document.getElementById('bq-target-weight-badge');
   if (targetWeightInput) targetWeightInput.value = questionnaireData.targetWeightKg;
+  if (targetWeightRange) targetWeightRange.value = questionnaireData.targetWeightKg;
+  if (targetWeightBadge) targetWeightBadge.textContent = formatWeight(questionnaireData.targetWeightKg);
 
   // Preselect activity radio
   const activityRadio = document.querySelector(`input[name="bq-activity"][value="${questionnaireData.activityLevel}"]`);
@@ -165,12 +199,120 @@ function setupBodyQuestionnaire() {
   const nextBtn = document.getElementById('bq-btn-next');
   const prevBtn = document.getElementById('bq-btn-prev');
 
-  // BMI calculation on height/weight input
-  const heightInput = document.getElementById('bq-height-input');
-  const weightInput = document.getElementById('bq-weight-input');
+  // Formatters
+  const formatHeight = (cm) => {
+    const totalInches = cm / 2.54;
+    const feet = Math.floor(totalInches / 12);
+    const inches = Math.round(totalInches % 12);
+    return `${cm} cm • ${feet}' ${inches}"`;
+  };
 
-  heightInput?.addEventListener('input', updateBmiPreview);
-  weightInput?.addEventListener('input', updateBmiPreview);
+  const formatWeight = (kg) => {
+    const lbs = (kg * 2.20462).toFixed(1);
+    return `${parseFloat(kg).toFixed(1)} kg • ${lbs} lbs`;
+  };
+
+  const approximateDobFromAge = (age) => {
+    const yr = new Date().getFullYear() - (parseInt(age, 10) || 70);
+    return `${yr}-06-15`;
+  };
+
+  // 1. Date of Birth Calendar Picker & Age Steppers
+  const dobInput = document.getElementById('bq-dob-input');
+  const ageInput = document.getElementById('bq-age-input');
+  const ageBadge = document.getElementById('bq-age-badge');
+  const ageDecBtn = document.getElementById('bq-age-dec');
+  const ageIncBtn = document.getElementById('bq-age-inc');
+
+  if (dobInput) {
+    dobInput.addEventListener('change', () => {
+      if (!dobInput.value) return;
+      const birth = new Date(dobInput.value);
+      const today = new Date();
+      let age = today.getFullYear() - birth.getFullYear();
+      const m = today.getMonth() - birth.getMonth();
+      if (m < 0 || (m === 0 && today.getDate() < birth.getDate())) {
+        age--;
+      }
+      age = Math.max(1, Math.min(120, age));
+      if (ageInput) ageInput.value = age;
+      if (ageBadge) ageBadge.textContent = `${age} yrs`;
+      questionnaireData.age = age;
+      updateBmiPreview();
+    });
+  }
+
+  const setAge = (newAge) => {
+    const val = Math.max(1, Math.min(120, newAge));
+    if (ageInput) ageInput.value = val;
+    if (ageBadge) ageBadge.textContent = `${val} yrs`;
+    if (dobInput) dobInput.value = approximateDobFromAge(val);
+    questionnaireData.age = val;
+    updateBmiPreview();
+  };
+
+  ageDecBtn?.addEventListener('click', () => setAge((parseInt(ageInput?.value, 10) || 70) - 1));
+  ageIncBtn?.addEventListener('click', () => setAge((parseInt(ageInput?.value, 10) || 70) + 1));
+  ageInput?.addEventListener('input', () => setAge(parseInt(ageInput.value, 10) || 70));
+
+  // 2. Height Slider & Steppers
+  const heightRange = document.getElementById('bq-height-range');
+  const heightInput = document.getElementById('bq-height-input');
+  const heightBadge = document.getElementById('bq-height-badge');
+  const heightDecBtn = document.getElementById('bq-height-dec');
+  const heightIncBtn = document.getElementById('bq-height-inc');
+
+  const setHeight = (val) => {
+    const cm = Math.max(100, Math.min(230, Math.round(val)));
+    if (heightRange) heightRange.value = cm;
+    if (heightInput) heightInput.value = cm;
+    if (heightBadge) heightBadge.textContent = formatHeight(cm);
+    questionnaireData.heightCm = cm;
+    updateBmiPreview();
+  };
+
+  heightRange?.addEventListener('input', (e) => setHeight(e.target.value));
+  heightDecBtn?.addEventListener('click', () => setHeight((parseInt(heightInput?.value, 10) || 164) - 1));
+  heightIncBtn?.addEventListener('click', () => setHeight((parseInt(heightInput?.value, 10) || 164) + 1));
+
+  // 3. Weight Slider & Steppers
+  const weightRange = document.getElementById('bq-weight-range');
+  const weightInput = document.getElementById('bq-weight-input');
+  const weightBadge = document.getElementById('bq-weight-badge');
+  const weightDecBtn = document.getElementById('bq-weight-dec');
+  const weightIncBtn = document.getElementById('bq-weight-inc');
+
+  const setWeight = (val) => {
+    const kg = Math.max(30, Math.min(200, Math.round(val * 2) / 2));
+    if (weightRange) weightRange.value = kg;
+    if (weightInput) weightInput.value = kg;
+    if (weightBadge) weightBadge.textContent = formatWeight(kg);
+    questionnaireData.weightKg = kg;
+    updateBmiPreview();
+  };
+
+  weightRange?.addEventListener('input', (e) => setWeight(e.target.value));
+  weightDecBtn?.addEventListener('click', () => setWeight((parseFloat(weightInput?.value) || 68) - 0.5));
+  weightIncBtn?.addEventListener('click', () => setWeight((parseFloat(weightInput?.value) || 68) + 0.5));
+
+  // 4. Target Weight Slider & Steppers
+  const targetWeightRange = document.getElementById('bq-target-weight-range');
+  const targetWeightInput = document.getElementById('bq-target-weight-input');
+  const targetWeightBadge = document.getElementById('bq-target-weight-badge');
+  const targetWeightDecBtn = document.getElementById('bq-target-weight-dec');
+  const targetWeightIncBtn = document.getElementById('bq-target-weight-inc');
+
+  const setTargetWeight = (val) => {
+    const kg = Math.max(30, Math.min(200, Math.round(val * 2) / 2));
+    if (targetWeightRange) targetWeightRange.value = kg;
+    if (targetWeightInput) targetWeightInput.value = kg;
+    if (targetWeightBadge) targetWeightBadge.textContent = formatWeight(kg);
+    questionnaireData.targetWeightKg = kg;
+  };
+
+  targetWeightRange?.addEventListener('input', (e) => setTargetWeight(e.target.value));
+  targetWeightDecBtn?.addEventListener('click', () => setTargetWeight((parseFloat(targetWeightInput?.value) || 65) - 0.5));
+  targetWeightIncBtn?.addEventListener('click', () => setTargetWeight((parseFloat(targetWeightInput?.value) || 65) + 0.5));
 
   // Activity cards selection
   document.querySelectorAll('.activity-card').forEach(card => {

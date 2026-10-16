@@ -1385,52 +1385,114 @@
           <div class="onboarding-progress-bar" id="bq-progress-bar" style="width: 25%;"></div>
         </div>
 
-        <!-- Step 1: Body Biometrics -->
+        <!-- Step 1: Body Biometrics with Visual Calendar & Stepper Pickers -->
         <div class="bq-step-section" id="bq-step-1">
-          <h4 style="font-size: 1.05rem; margin-bottom: 12px; color: var(--primary-700);">
-            Step 1: Your Body Biometrics
-          </h4>
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 12px;">
+            <h4 style="font-size: 1.05rem; margin: 0; color: var(--primary-700);">
+              Step 1: Your Body Biometrics
+            </h4>
+            <span style="font-size: 0.78rem; color: var(--primary-600); font-weight:700; background:var(--primary-50); padding:2px 8px; border-radius:var(--radius-pill);">
+              📅 Calendar & Visual Pickers
+            </span>
+          </div>
 
+          <!-- Row 1: Name & Gender -->
           <div class="form-grid-2">
             <div class="form-group">
-              <label class="form-label">Full Name *</label>
+              <label class="form-label" for="bq-name-input">Full Name *</label>
               <input type="text" id="bq-name-input" class="form-input" placeholder="e.g. Eleanor Vance" required />
             </div>
             <div class="form-group">
-              <label class="form-label">Age (years) *</label>
-              <input type="number" id="bq-age-input" class="form-input" value="65" min="1" max="120" required />
-            </div>
-          </div>
-
-          <div class="form-grid-3" style="margin-top: 14px;">
-            <div class="form-group">
-              <label class="form-label">Biological Sex *</label>
+              <label class="form-label" for="bq-gender-select">Biological Sex *</label>
               <select id="bq-gender-select" class="form-select">
                 <option value="Female">Female</option>
                 <option value="Male">Male</option>
                 <option value="Other">Other</option>
               </select>
             </div>
+          </div>
+
+          <!-- Row 2: Date of Birth Calendar Picker & Computed Age Stepper -->
+          <div class="form-grid-2" style="margin-top: 14px;">
             <div class="form-group">
-              <label class="form-label">Height (cm) *</label>
-              <input type="number" id="bq-height-input" class="form-input" value="165" min="50" max="250" required />
+              <div class="bq-picker-header">
+                <label class="form-label" for="bq-dob-input" style="margin:0;">📅 Date of Birth</label>
+                <span class="bq-picker-hint">Calendar Selector</span>
+              </div>
+              <input type="date" id="bq-dob-input" class="form-input" value="1953-06-15" max="2026-10-16" />
             </div>
+
             <div class="form-group">
-              <label class="form-label">Current Weight (kg) *</label>
-              <input type="number" id="bq-weight-input" class="form-input" value="68" step="0.1" min="20" max="350" required />
+              <div class="bq-picker-header">
+                <label class="form-label" for="bq-age-input" style="margin:0;">🎂 Age (years) *</label>
+                <span id="bq-age-badge" class="bq-metric-val-badge">73 yrs</span>
+              </div>
+              <div class="bq-stepper-box">
+                <button type="button" class="bq-step-btn" id="bq-age-dec" title="Decrease Age by 1">−</button>
+                <input type="number" id="bq-age-input" class="bq-stepper-input" value="73" min="1" max="120" required />
+                <button type="button" class="bq-step-btn" id="bq-age-inc" title="Increase Age by 1">+</button>
+              </div>
             </div>
           </div>
 
+          <!-- Row 3: Height Slider & Weight Slider -->
           <div class="form-grid-2" style="margin-top: 14px;">
             <div class="form-group">
-              <label class="form-label">Target Weight Goal (kg)</label>
-              <input type="number" id="bq-target-weight-input" class="form-input" value="65" step="0.1" placeholder="e.g. 65" />
+              <div class="bq-picker-header">
+                <label class="form-label" style="margin:0;">📏 Height (cm) *</label>
+                <span id="bq-height-badge" class="bq-metric-val-badge">164 cm • 5' 5"</span>
+              </div>
+              <div class="bq-slider-card">
+                <div class="bq-slider-controls">
+                  <button type="button" class="bq-step-btn" id="bq-height-dec" title="Decrease Height by 1 cm">−</button>
+                  <input type="range" id="bq-height-range" class="bq-range-slider" min="100" max="230" step="1" value="164" />
+                  <button type="button" class="bq-step-btn" id="bq-height-inc" title="Increase Height by 1 cm">+</button>
+                </div>
+                <input type="hidden" id="bq-height-input" value="164" />
+              </div>
             </div>
+
             <div class="form-group">
-              <label class="form-label">Body Mass Index (BMI)</label>
+              <div class="bq-picker-header">
+                <label class="form-label" style="margin:0;">⚖️ Current Weight (kg) *</label>
+                <span id="bq-weight-badge" class="bq-metric-val-badge">68.0 kg • 149.9 lbs</span>
+              </div>
+              <div class="bq-slider-card">
+                <div class="bq-slider-controls">
+                  <button type="button" class="bq-step-btn" id="bq-weight-dec" title="Decrease Weight by 0.5 kg">−</button>
+                  <input type="range" id="bq-weight-range" class="bq-range-slider" min="30" max="200" step="0.5" value="68" />
+                  <button type="button" class="bq-step-btn" id="bq-weight-inc" title="Increase Weight by 0.5 kg">+</button>
+                </div>
+                <input type="hidden" id="bq-weight-input" value="68" />
+              </div>
+            </div>
+          </div>
+
+          <!-- Row 4: Target Weight & Live BMI -->
+          <div class="form-grid-2" style="margin-top: 14px;">
+            <div class="form-group">
+              <div class="bq-picker-header">
+                <label class="form-label" style="margin:0;">🎯 Target Weight Goal (kg)</label>
+                <span id="bq-target-weight-badge" class="bq-metric-val-badge">65.0 kg • 143.3 lbs</span>
+              </div>
+              <div class="bq-slider-card">
+                <div class="bq-slider-controls">
+                  <button type="button" class="bq-step-btn" id="bq-target-weight-dec" title="Decrease Target by 0.5 kg">−</button>
+                  <input type="range" id="bq-target-weight-range" class="bq-range-slider" min="30" max="200" step="0.5" value="65" />
+                  <button type="button" class="bq-step-btn" id="bq-target-weight-inc" title="Increase Target by 0.5 kg">+</button>
+                </div>
+                <input type="hidden" id="bq-target-weight-input" value="65" />
+              </div>
+            </div>
+
+            <div class="form-group">
+              <div class="bq-picker-header">
+                <label class="form-label" style="margin:0;">📊 Body Mass Index (BMI)</label>
+                <span style="font-size:0.75rem; color:var(--text-muted);">Real-Time Classification</span>
+              </div>
               <div class="bq-bmi-card">
                 <div id="bq-bmi-display" class="vital-status-chip normal">
-                  ● BMI: <strong>25.0</strong> (Normal Weight)
+                  ● BMI: <strong>25.3</strong> (Overweight)
                 </div>
               </div>
             </div>

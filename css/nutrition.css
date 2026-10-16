@@ -601,4 +601,156 @@
   margin-left: auto;
 }
 
+/* ─── Visual Picker & Stepper Components ─── */
+.bq-picker-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.bq-picker-hint {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+.bq-metric-val-badge {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--primary-700);
+  background: var(--primary-50, rgba(13, 148, 136, 0.1));
+  border: 1px solid rgba(13, 148, 136, 0.25);
+  padding: 2px 8px;
+  border-radius: var(--radius-pill);
+  font-variant-numeric: tabular-nums;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+[data-theme="dark"] .bq-metric-val-badge {
+  background: rgba(13, 148, 136, 0.2);
+  color: #5eead4;
+  border-color: rgba(94, 234, 212, 0.3);
+}
+
+/* Stepper Box */
+.bq-stepper-box {
+  display: flex;
+  align-items: center;
+  height: 42px;
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
+  background: var(--bg-card);
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+.bq-step-btn {
+  width: 38px;
+  height: 100%;
+  border: none;
+  background: var(--bg-subtle);
+  color: var(--text-heading);
+  font-size: 1.15rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+  user-select: none;
+  flex-shrink: 0;
+}
+
+.bq-step-btn:hover {
+  background: var(--primary-50);
+  color: var(--primary-700);
+}
+
+.bq-step-btn:active {
+  transform: scale(0.92);
+}
+
+.bq-stepper-input {
+  flex: 1;
+  height: 100%;
+  border: none;
+  background: transparent;
+  text-align: center;
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: var(--text-heading);
+  outline: none;
+  -moz-appearance: textfield;
+}
+
+.bq-stepper-input::-webkit-outer-spin-button,
+.bq-stepper-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Slider Card & Range Controls */
+.bq-slider-card {
+  height: 42px;
+  display: flex;
+  align-items: center;
+  padding: 0 4px;
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
+  background: var(--bg-card);
+  box-sizing: border-box;
+}
+
+.bq-slider-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  height: 100%;
+}
+
+.bq-range-slider {
+  flex: 1;
+  -webkit-appearance: none;
+  appearance: none;
+  height: 6px;
+  border-radius: 9999px;
+  background: var(--border-light);
+  outline: none;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.bq-range-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--primary-600);
+  border: 2px solid #ffffff;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.25);
+  cursor: pointer;
+  transition: transform 0.15s ease, background-color 0.15s ease;
+}
+
+.bq-range-slider::-webkit-slider-thumb:hover {
+  transform: scale(1.15);
+  background: var(--primary-500);
+}
+
+.bq-range-slider::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--primary-600);
+  border: 2px solid #ffffff;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.25);
+  cursor: pointer;
+}
+
+
 
