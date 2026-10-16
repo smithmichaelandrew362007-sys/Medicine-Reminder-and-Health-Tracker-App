@@ -453,18 +453,23 @@ a:hover {
     width: 100%;
     flex-direction: row;
     overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
     border-right: none;
     border-bottom: 1px solid var(--border-light);
-    padding: 10px 14px;
+    padding: 8px 12px;
     gap: 6px;
   }
   .nav-item {
     white-space: nowrap;
-    padding: 8px 12px;
+    padding: 8px 14px;
     font-size: 0.85rem;
+    flex-shrink: 0;
+  }
+  .sidebar-header {
+    display: none;
   }
   .content-area {
-    padding: 18px 14px;
+    padding: 16px 12px;
   }
   .live-status-ribbon {
     flex-direction: column;
@@ -472,3 +477,78 @@ a:hover {
     gap: 12px;
   }
 }
+
+@media (max-width: 768px) {
+  .top-navbar {
+    padding: 10px 12px;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .brand-section {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .brand-name {
+    font-size: 1.05rem;
+  }
+
+  .brand-tagline {
+    display: none;
+  }
+
+  .role-switch-container {
+    width: 100%;
+    order: 3;
+    display: flex;
+    margin-top: 4px;
+  }
+
+  .role-btn {
+    flex: 1;
+    justify-content: center;
+    padding: 7px 10px;
+    font-size: 0.82rem;
+  }
+
+  .nav-actions {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-left: auto;
+  }
+
+  #user-profile-btn-text {
+    max-width: 100px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  /* When on a real phone, remove simulated desktop phone bezel */
+  .simulator-wrapper.mobile-mode {
+    max-width: 100% !important;
+    margin: 0 !important;
+    border: none !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .top-navbar {
+    padding: 8px 10px;
+  }
+
+  #btn-toggle-frame,
+  .top-navbar div[style*="live-clock-display"] {
+    display: none !important;
+  }
+
+  .content-area {
+    padding: 12px 8px;
+  }
+}
+

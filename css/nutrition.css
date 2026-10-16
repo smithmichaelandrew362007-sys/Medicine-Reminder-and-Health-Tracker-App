@@ -752,5 +752,126 @@
   cursor: pointer;
 }
 
+/* ─── Mobile Modal & Responsive Rules ─── */
+@media (max-width: 680px) {
+  #body-questionnaire-modal .modal-container {
+    width: 95% !important;
+    max-width: 95% !important;
+    max-height: 94vh !important;
+    margin: 8px auto !important;
+    border-radius: 18px !important;
+  }
+
+  .bq-modal-header {
+    padding: 14px 16px;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+    position: relative;
+  }
+
+  .bq-header-left {
+    width: 100%;
+    padding-right: 36px;
+  }
+
+  .bq-title-row {
+    gap: 6px;
+  }
+
+  .bq-modal-title {
+    font-size: 1.1rem;
+  }
+
+  .bq-ai-badge {
+    font-size: 0.68rem;
+    padding: 2px 7px;
+  }
+
+  .bq-subtitle {
+    font-size: 0.76rem;
+    margin-top: 3px;
+  }
+
+  .bq-header-right {
+    width: 100%;
+    display: flex;
+    justify-content: flex-start;
+    padding-top: 6px;
+    border-top: 1px dashed var(--border-light);
+  }
+
+  .bq-step-pill {
+    font-size: 0.78rem;
+    padding: 3px 10px;
+  }
+
+  .bq-close-btn {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+  }
+
+  /* Single Column Layout for all form grids on mobile */
+  #body-questionnaire-modal .form-grid-2,
+  #body-questionnaire-modal .form-grid-3 {
+    grid-template-columns: 1fr !important;
+    gap: 12px !important;
+  }
+
+  .activity-card-grid,
+  .goal-card-grid {
+    grid-template-columns: 1fr !important;
+    gap: 10px !important;
+  }
+
+  /* Touch-friendly Stepper and Slider Heights */
+  .bq-stepper-box,
+  .bq-slider-card,
+  .bq-bmi-card,
+  #body-questionnaire-modal .form-input,
+  #body-questionnaire-modal .form-select {
+    height: 44px;
+  }
+
+  .bq-step-btn {
+    width: 44px;
+    font-size: 1.25rem;
+  }
+
+  .bq-range-slider::-webkit-slider-thumb {
+    width: 22px;
+    height: 22px;
+  }
+
+  .bq-range-slider::-moz-range-thumb {
+    width: 22px;
+    height: 22px;
+  }
+
+  .bq-modal-footer {
+    padding: 12px 16px;
+    gap: 10px;
+  }
+
+  .bq-modal-footer .btn {
+    flex: 1;
+    min-width: 0;
+    height: 44px;
+    font-size: 0.92rem;
+  }
+
+  #bq-ai-results > div:first-child #bq-result-calories {
+    font-size: 2.2rem;
+  }
+
+  #bq-ai-results > div:nth-child(2) {
+    flex-direction: column;
+    gap: 8px;
+    text-align: center;
+  }
+}
+
+
 
 
