@@ -40,13 +40,19 @@
   background: rgba(16, 185, 129, 0.2);
 }
 
-/* ─── Body Questionnaire Cards (Activity & Goals) ─── */
 .activity-card-grid,
 .goal-card-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  gap: 10px;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
   margin-top: 10px;
+}
+
+@media (max-width: 540px) {
+  .activity-card-grid,
+  .goal-card-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 .activity-card,
@@ -431,3 +437,168 @@
   padding: 16px;
   margin-top: 14px;
 }
+
+/* ─── Body Questionnaire Modal Enhancements & Proper Alignment ─── */
+#body-questionnaire-modal .modal-container {
+  max-width: 680px;
+  width: 95%;
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+  box-shadow: 0 20px 48px rgba(0, 0, 0, 0.22);
+}
+
+.bq-modal-header {
+  padding: 18px 24px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  border-bottom: 1px solid var(--border-light);
+  background: var(--bg-card);
+}
+
+.bq-header-left {
+  flex: 1;
+  min-width: 0;
+}
+
+.bq-title-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.bq-modal-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin: 0;
+  color: var(--text-heading);
+  line-height: 1.3;
+}
+
+.bq-ai-badge {
+  font-size: 0.72rem;
+  background: linear-gradient(135deg, #6366f1, #a855f7);
+  color: #fff;
+  padding: 3px 10px;
+  border-radius: var(--radius-pill);
+  font-weight: 700;
+  white-space: nowrap;
+  flex-shrink: 0;
+  box-shadow: 0 2px 6px rgba(168, 85, 247, 0.25);
+  display: inline-flex;
+  align-items: center;
+}
+
+.bq-subtitle {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  margin: 5px 0 0 0;
+  line-height: 1.35;
+}
+
+.bq-header-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.bq-step-pill {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--primary-700);
+  background: var(--primary-50, rgba(13, 148, 136, 0.1));
+  border: 1px solid rgba(13, 148, 136, 0.25);
+  padding: 6px 14px;
+  border-radius: var(--radius-pill);
+  white-space: nowrap;
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1.2;
+}
+
+[data-theme="dark"] .bq-step-pill {
+  background: rgba(13, 148, 136, 0.2);
+  color: #5eead4;
+  border-color: rgba(94, 234, 212, 0.3);
+}
+
+.bq-close-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  font-size: 1rem;
+  color: var(--text-muted);
+  flex-shrink: 0;
+  background: transparent;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.bq-close-btn:hover {
+  background: var(--bg-subtle);
+  color: var(--text-heading);
+  border-color: var(--border-light);
+}
+
+/* ─── Body Questionnaire Input Box Alignment ─── */
+#body-questionnaire-modal .form-input,
+#body-questionnaire-modal .form-select {
+  height: 42px;
+  box-sizing: border-box;
+  font-size: 0.92rem;
+}
+
+.bq-bmi-card {
+  height: 42px;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  padding: 0 12px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
+}
+
+.bq-bmi-card .vital-status-chip {
+  margin: 0;
+  padding: 4px 10px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  border-radius: var(--radius-pill);
+}
+
+/* Modal footer buttons alignment */
+.bq-modal-footer {
+  padding: 16px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-top: 1px solid var(--border-light);
+  background: var(--bg-subtle);
+}
+
+.bq-modal-footer .btn {
+  min-width: 120px;
+  height: 42px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  border-radius: var(--radius-md);
+}
+
+.bq-modal-footer #bq-btn-next {
+  margin-left: auto;
+}
+
+

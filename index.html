@@ -1362,22 +1362,20 @@
 
   <!-- 11. Body Profile & Gemini Nutrition Questionnaire Modal -->
   <div class="modal-overlay" id="body-questionnaire-modal">
-    <div class="modal-container" style="max-width: 660px;">
-      <div class="modal-header">
-        <div>
-          <div style="display:flex; align-items:center; gap:8px;">
-            <h3 class="modal-title" style="margin:0;">📋 Personalize Your Health & Nutrition</h3>
-            <span style="font-size:0.75rem; background:linear-gradient(135deg, #6366f1, #a855f7); color:#fff; padding:2px 8px; border-radius:9999px; font-weight:700;">
-              ✨ Gemini AI Powered
-            </span>
+    <div class="modal-container bq-modal-container">
+      <div class="modal-header bq-modal-header">
+        <div class="bq-header-left">
+          <div class="bq-title-row">
+            <h3 class="modal-title bq-modal-title">📋 Personalize Your Health & Nutrition</h3>
+            <span class="bq-ai-badge">✨ Gemini AI Powered</span>
           </div>
-          <div style="font-size: 0.82rem; color: var(--text-muted); margin-top:3px;">
+          <p class="bq-subtitle">
             Help CareSync tailor your medication schedules, caloric needs, and dietary safety.
-          </div>
+          </p>
         </div>
-        <div style="display:flex; align-items:center; gap:8px;">
-          <span id="bq-step-indicator" style="font-size: 0.8rem; font-weight: 700; background: var(--bg-subtle); padding: 4px 10px; border-radius: var(--radius-pill);">Step 1 of 4</span>
-          <button class="btn btn-sm btn-ghost modal-close">✕</button>
+        <div class="bq-header-right">
+          <span id="bq-step-indicator" class="bq-step-pill">Step 1 of 4</span>
+          <button type="button" class="btn btn-sm btn-ghost modal-close bq-close-btn" title="Close" aria-label="Close">✕</button>
         </div>
       </div>
 
@@ -1404,7 +1402,7 @@
             </div>
           </div>
 
-          <div class="form-grid-3" style="margin-top: 12px;">
+          <div class="form-grid-3" style="margin-top: 14px;">
             <div class="form-group">
               <label class="form-label">Biological Sex *</label>
               <select id="bq-gender-select" class="form-select">
@@ -1423,15 +1421,17 @@
             </div>
           </div>
 
-          <div class="form-grid-2" style="margin-top: 12px;">
+          <div class="form-grid-2" style="margin-top: 14px;">
             <div class="form-group">
               <label class="form-label">Target Weight Goal (kg)</label>
               <input type="number" id="bq-target-weight-input" class="form-input" value="65" step="0.1" placeholder="e.g. 65" />
             </div>
-            <div style="display:flex; flex-direction:column; justify-content:center;">
+            <div class="form-group">
               <label class="form-label">Body Mass Index (BMI)</label>
-              <div id="bq-bmi-display" class="vital-status-chip normal" style="align-self:flex-start; margin-top:4px;">
-                ● BMI: <strong>25.0</strong> (Normal Weight)
+              <div class="bq-bmi-card">
+                <div id="bq-bmi-display" class="vital-status-chip normal">
+                  ● BMI: <strong>25.0</strong> (Normal Weight)
+                </div>
               </div>
             </div>
           </div>
@@ -1599,7 +1599,7 @@
         </div>
       </div>
 
-      <div class="modal-footer">
+      <div class="modal-footer bq-modal-footer">
         <button type="button" class="btn btn-secondary hidden" id="bq-btn-prev">← Previous</button>
         <button type="button" class="btn btn-primary" id="bq-btn-next">Next Step →</button>
       </div>
