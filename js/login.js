@@ -509,9 +509,95 @@ async function checkNeonStatus() {
   }
 }
 
+// ─── Theme Switcher Logic ───
+const THEME_NAMES = {
+  'light': { label: 'Light', icon: '🌿', badge: 'Clinical Light' },
+  'dark': { label: 'Dark', icon: '🌙', badge: 'Midnight Dark' },
+  'pink-light': { label: 'Pink', icon: '🌸', badge: 'Rose Light' },
+  'red-dark': { label: 'Red', icon: '🩸', badge: 'Crimson Dark' }
+};
+
+function setupLoginThemeSwitcher() {
+  const btn = document.getElementById('login-theme-btn');
+  const dropdown = document.getElementById('login-theme-dropdown');
+  const icon = document.getElementById('login-theme-icon');
+  const label = document.getElementById('login-theme-label');
+  const badge = document.getElementById('login-theme-badge');
+  const STORAGE_KEY = 'MED_HEALTH_TRACKER_DATA_V2';
+
+  // Read current theme
+  let currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
+  try {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (saved) {
+      const s = JSON.parse(saved);
+      if (s.theme) currentTheme = s.theme;
+    }
+  } catch (e) {}
+
+  function applyTheme(theme) {
+    currentTheme = theme;
+    document.documentElement.setAttribute('data-theme', theme);
+    const meta = THEME_NAMES[theme] || THEME_NAMES['light'];
+    if (icon) icon.textContent = meta.icon;
+    if (label) label.textContent = meta.label;
+    if (badge) badge.textContent = meta.badge;
+
+    // Update active button state
+    document.querySelectorAll('#login-theme-dropdown .theme-option-btn').forEach(b => {
+      if (b.getAttribute('data-theme-value') === theme) {
+        b.classList.add('active');
+      } else {
+        b.classList.remove('active');
+      }
+    });
+
+    // Save to localStorage
+    try {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      let s = saved ? JSON.parse(saved) : {};
+      s.theme = theme;
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(s));
+    } catch (e) {}
+  }
+
+  // Initial apply
+  applyTheme(currentTheme);
+
+  if (btn && dropdown) {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      dropdown.classList.toggle('active');
+      btn.setAttribute('aria-expanded', dropdown.classList.contains('active'));
+    });
+
+    document.querySelectorAll('#login-theme-dropdown .theme-option-btn').forEach(opt => {
+      opt.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const selected = opt.getAttribute('data-theme-value');
+        if (selected) {
+          applyTheme(selected);
+          dropdown.classList.remove('active');
+          btn.setAttribute('aria-expanded', 'false');
+        }
+      });
+    });
+
+    // Close when clicking outside
+    document.addEventListener('click', (e) => {
+      if (!dropdown.contains(e.target) && !btn.contains(e.target)) {
+        dropdown.classList.remove('active');
+        btn.setAttribute('aria-expanded', 'false');
+      }
+    });
+  }
+}
+
 // ─── Init ───
 checkExistingSession();
+setupLoginThemeSwitcher();
 checkNeonStatus();
 
 // Refresh Neon status every 30s
 setInterval(checkNeonStatus, 30000);
+

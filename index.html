@@ -12,7 +12,7 @@
   <link rel="stylesheet" href="/css/views.css" />
   <link rel="stylesheet" href="/css/nutrition.css" />
 
-  <!-- Immediate Auth Guard: Redirect unauthenticated visitors directly to login.html -->
+  <!-- Immediate Auth Guard & Theme Restore: Redirect unauthenticated visitors directly to login.html -->
   <script>
     (function() {
       try {
@@ -22,6 +22,9 @@
           return;
         }
         const state = JSON.parse(saved);
+        if (state.theme) {
+          document.documentElement.setAttribute('data-theme', state.theme);
+        }
         if (!state.currentUser || !state.currentUser.id) {
           window.location.replace('/login.html');
         }
@@ -92,10 +95,71 @@
           📱
         </button>
 
-        <!-- Dark / Light Mode Toggle -->
-        <button class="icon-btn" id="btn-toggle-theme" title="Toggle Dark/Light Mode">
-          🌙
-        </button>
+        <!-- Appearance Theme Picker -->
+        <div class="theme-picker-container" style="position: relative;">
+          <button class="icon-btn" id="btn-toggle-theme" title="Select Appearance Theme" aria-expanded="false" aria-haspopup="true">
+            <span id="theme-btn-icon">🎨</span>
+          </button>
+          <div class="theme-dropdown-menu" id="theme-dropdown-menu">
+            <div class="theme-menu-header">
+              <span class="theme-menu-title">Select Appearance</span>
+              <span class="theme-menu-badge" id="theme-active-badge">Clinical Light</span>
+            </div>
+            <div class="theme-options-grid">
+              <!-- Option 1: Default Light (Clinical Teal) -->
+              <button class="theme-option-btn" data-theme-value="light" type="button">
+                <span class="theme-swatch swatch-light">
+                  <span class="swatch-half swatch-half-primary" style="background: #0d9488;"></span>
+                  <span class="swatch-half swatch-half-bg" style="background: #f8fafc;"></span>
+                </span>
+                <div class="theme-option-info">
+                  <span class="theme-option-name">Clinical Light</span>
+                  <span class="theme-option-desc">Teal &amp; Slate (Default)</span>
+                </div>
+                <span class="theme-check-icon">✓</span>
+              </button>
+
+              <!-- Option 2: Default Dark (Midnight Teal) -->
+              <button class="theme-option-btn" data-theme-value="dark" type="button">
+                <span class="theme-swatch swatch-dark">
+                  <span class="swatch-half swatch-half-primary" style="background: #14b8a6;"></span>
+                  <span class="swatch-half swatch-half-bg" style="background: #090d16;"></span>
+                </span>
+                <div class="theme-option-info">
+                  <span class="theme-option-name">Midnight Dark</span>
+                  <span class="theme-option-desc">Teal &amp; Deep Navy (Default)</span>
+                </div>
+                <span class="theme-check-icon">✓</span>
+              </button>
+
+              <!-- Option 3: Rose Light (Dark Pink #970747 & White) -->
+              <button class="theme-option-btn" data-theme-value="pink-light" type="button">
+                <span class="theme-swatch swatch-pink-light">
+                  <span class="swatch-half swatch-half-primary" style="background: #970747;"></span>
+                  <span class="swatch-half swatch-half-bg" style="background: #ffffff;"></span>
+                </span>
+                <div class="theme-option-info">
+                  <span class="theme-option-name">Rose Light</span>
+                  <span class="theme-option-desc">Dark Pink (#970747) &amp; White</span>
+                </div>
+                <span class="theme-check-icon">✓</span>
+              </button>
+
+              <!-- Option 4: Crimson Dark (Red #B4121B & Pure Black) -->
+              <button class="theme-option-btn" data-theme-value="red-dark" type="button">
+                <span class="theme-swatch swatch-red-dark">
+                  <span class="swatch-half swatch-half-primary" style="background: #B4121B;"></span>
+                  <span class="swatch-half swatch-half-bg" style="background: #000000;"></span>
+                </span>
+                <div class="theme-option-info">
+                  <span class="theme-option-name">Crimson Dark</span>
+                  <span class="theme-option-desc">Red (#B4121B) &amp; Black</span>
+                </div>
+                <span class="theme-check-icon">✓</span>
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
     </header>
 

@@ -75,8 +75,8 @@ function initApp() {
   // Subscribe to store updates to keep UI synchronized
   store.subscribe((updatedState) => {
     updateBadges(updatedState);
-    if (updatedState.theme !== document.documentElement.getAttribute('data-theme')) {
-      document.documentElement.setAttribute('data-theme', updatedState.theme);
+    if (updatedState.theme && updatedState.theme !== document.documentElement.getAttribute('data-theme')) {
+      applyTheme(updatedState.theme);
     }
   });
 
@@ -167,21 +167,73 @@ function setupRoleSwitcher() {
   }
 }
 
+const THEME_INFO = {
+  'light': { name: 'Clinical Light', icon: '🌿' },
+  'dark': { name: 'Midnight Dark', icon: '🌙' },
+  'pink-light': { name: 'Rose Light', icon: '🌸' },
+  'red-dark': { name: 'Crimson Dark', icon: '🩸' }
+};
+
+function applyTheme(theme) {
+  const safeTheme = THEME_INFO[theme] ? theme : 'light';
+  document.documentElement.setAttribute('data-theme', safeTheme);
+
+  const iconSpan = document.getElementById('theme-btn-icon');
+  const badgeSpan = document.getElementById('theme-active-badge');
+  const meta = THEME_INFO[safeTheme];
+
+  if (iconSpan) iconSpan.textContent = meta.icon;
+  if (badgeSpan) badgeSpan.textContent = meta.name;
+
+  // Update active button state in dropdown
+  document.querySelectorAll('#theme-dropdown-menu .theme-option-btn').forEach(btn => {
+    if (btn.getAttribute('data-theme-value') === safeTheme) {
+      btn.classList.add('active');
+    } else {
+      btn.classList.remove('active');
+    }
+  });
+
+  // Redraw charts with adapted grid colors
+  if (currentTab === 'vitals') {
+    renderChart('bp');
+  }
+}
+
 /**
- * Theme Toggle (Light / Dark)
+ * Theme Dropdown Switcher System (Supports 4 Themes)
  */
 function setupThemeToggle() {
   const toggleBtn = document.getElementById('btn-toggle-theme');
-  if (toggleBtn) {
-    toggleBtn.addEventListener('click', () => {
-      const current = document.documentElement.getAttribute('data-theme') || 'light';
-      const next = current === 'dark' ? 'light' : 'dark';
-      document.documentElement.setAttribute('data-theme', next);
-      toggleBtn.innerHTML = next === 'dark' ? '☀️' : '🌙';
-      store.update({ theme: next });
-      // Redraw charts with adapted grid colors
-      if (currentTab === 'vitals') {
-        renderChart('bp');
+  const menu = document.getElementById('theme-dropdown-menu');
+
+  if (toggleBtn && menu) {
+    toggleBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const isActive = menu.classList.toggle('active');
+      toggleBtn.setAttribute('aria-expanded', isActive);
+    });
+
+    // Theme option clicks
+    document.querySelectorAll('#theme-dropdown-menu .theme-option-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const selected = btn.getAttribute('data-theme-value');
+        if (selected) {
+          applyTheme(selected);
+          store.update({ theme: selected });
+          menu.classList.remove('active');
+          toggleBtn.setAttribute('aria-expanded', 'false');
+          showToast(`Appearance: ${THEME_INFO[selected]?.name || selected}`, 'info');
+        }
+      });
+    });
+
+    // Click outside to close
+    document.addEventListener('click', (e) => {
+      if (!menu.contains(e.target) && !toggleBtn.contains(e.target)) {
+        menu.classList.remove('active');
+        toggleBtn.setAttribute('aria-expanded', 'false');
       }
     });
   }
@@ -190,11 +242,7 @@ function setupThemeToggle() {
 function applyStoredTheme() {
   const state = store.getState();
   const theme = state.theme || 'light';
-  document.documentElement.setAttribute('data-theme', theme);
-  const toggleBtn = document.getElementById('btn-toggle-theme');
-  if (toggleBtn) {
-    toggleBtn.innerHTML = theme === 'dark' ? '☀️' : '🌙';
-  }
+  applyTheme(theme);
 }
 
 /**

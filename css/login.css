@@ -32,6 +32,69 @@
   --login-radius-pill: 50px;
 }
 
+/* Theme: Default Light */
+[data-theme="light"] {
+  --login-primary: #0d9488;
+  --login-primary-light: #14b8a6;
+  --login-primary-dark: #0f766e;
+  --login-accent: #6366f1;
+  --login-accent-light: #818cf8;
+  --login-gradient-start: #f8fafc;
+  --login-gradient-mid: #f1f5f9;
+  --login-gradient-end: #e2e8f0;
+  --login-glass-bg: rgba(255, 255, 255, 0.92);
+  --login-glass-border: rgba(13, 148, 136, 0.18);
+  --login-glass-shadow: 0 20px 60px rgba(15, 23, 42, 0.12);
+  --login-text: #0f172a;
+  --login-text-muted: #64748b;
+  --login-text-subtle: #94a3b8;
+  --login-input-bg: rgba(255, 255, 255, 0.95);
+  --login-input-border: rgba(13, 148, 136, 0.22);
+  --login-input-focus: rgba(13, 148, 136, 0.45);
+}
+
+/* Theme: Pink & White (Dark Pink #970747 & White #ffffff) */
+[data-theme="pink-light"] {
+  --login-primary: #970747;
+  --login-primary-light: #be185d;
+  --login-primary-dark: #81063c;
+  --login-accent: #db2777;
+  --login-accent-light: #f472b6;
+  --login-gradient-start: #ffffff;
+  --login-gradient-mid: #fff0f5;
+  --login-gradient-end: #fce7f3;
+  --login-glass-bg: rgba(255, 255, 255, 0.94);
+  --login-glass-border: rgba(151, 7, 71, 0.22);
+  --login-glass-shadow: 0 20px 60px rgba(151, 7, 71, 0.14);
+  --login-text: #1d0714;
+  --login-text-muted: #73435c;
+  --login-text-subtle: #9e6d87;
+  --login-input-bg: rgba(255, 255, 255, 0.95);
+  --login-input-border: rgba(151, 7, 71, 0.25);
+  --login-input-focus: rgba(151, 7, 71, 0.5);
+}
+
+/* Theme: Red & Black (Crimson Red #B4121B & Pure Black #000000) */
+[data-theme="red-dark"] {
+  --login-primary: #B4121B;
+  --login-primary-light: #e53935;
+  --login-primary-dark: #8e0c13;
+  --login-accent: #ff1744;
+  --login-accent-light: #ff5252;
+  --login-gradient-start: #000000;
+  --login-gradient-mid: #0a0203;
+  --login-gradient-end: #140406;
+  --login-glass-bg: rgba(14, 14, 17, 0.94);
+  --login-glass-border: rgba(180, 18, 27, 0.42);
+  --login-glass-shadow: 0 25px 80px rgba(0, 0, 0, 0.95), 0 0 50px rgba(180, 18, 27, 0.25);
+  --login-text: #ffffff;
+  --login-text-muted: #cbd5e1;
+  --login-text-subtle: #94a3b8;
+  --login-input-bg: rgba(255, 255, 255, 0.06);
+  --login-input-border: rgba(180, 18, 27, 0.45);
+  --login-input-focus: rgba(180, 18, 27, 0.7);
+}
+
 /* --- Reset & Base --- */
 *, *::before, *::after {
   box-sizing: border-box;
@@ -955,12 +1018,43 @@ body {
   transition: color 0.3s;
 }
 
-/* --- Neon DB Status Pill (on login page) --- */
-.login-neon-status {
+/* --- Top Right Action Bar (Theme + Neon DB) --- */
+.login-top-bar {
   position: fixed;
   top: 20px;
   right: 20px;
   z-index: 100;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.login-theme-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--login-glass-border);
+  border-radius: var(--login-radius-pill);
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--login-text-muted);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.login-theme-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--login-text);
+  border-color: var(--login-primary);
+}
+
+/* --- Neon DB Status Pill (on login page) --- */
+.login-neon-status {
+  position: relative;
   display: flex;
   align-items: center;
   gap: 8px;
@@ -992,6 +1086,405 @@ body {
 
 .login-neon-status__dot.connected {
   background: var(--login-success);
+}
+
+/* --- Theme Dropdown Menu on Login --- */
+.theme-picker-container {
+  position: relative;
+}
+
+.theme-dropdown-menu {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  width: 300px;
+  background: var(--login-glass-bg);
+  backdrop-filter: blur(30px);
+  -webkit-backdrop-filter: blur(30px);
+  border: 1px solid var(--login-glass-border);
+  border-radius: var(--login-radius);
+  box-shadow: var(--login-glass-shadow);
+  padding: 12px;
+  z-index: 1000;
+  opacity: 0;
+  transform: translateY(-8px) scale(0.97);
+  pointer-events: none;
+  transition: opacity 0.2s cubic-bezier(0.16, 1, 0.3, 1), transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.theme-dropdown-menu.active {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  pointer-events: auto;
+}
+
+.theme-menu-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 8px 10px 8px;
+  border-bottom: 1px solid var(--login-glass-border);
+  margin-bottom: 8px;
+}
+
+.theme-menu-title {
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--login-text-muted);
+}
+
+.theme-menu-badge {
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 2px 8px;
+  background: rgba(13, 148, 136, 0.15);
+  color: var(--login-primary-light);
+  border-radius: var(--login-radius-pill);
+  border: 1px solid var(--login-glass-border);
+}
+
+.theme-options-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.theme-option-btn {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 9px 12px;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: var(--login-radius-sm);
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.2s ease;
+  color: var(--login-text);
+  position: relative;
+}
+
+.theme-option-btn:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: var(--login-glass-border);
+  transform: translateX(2px);
+}
+
+.theme-option-btn.active {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: var(--login-primary);
+  box-shadow: 0 0 0 1px var(--login-primary);
+}
+
+.theme-swatch {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  display: flex;
+  overflow: hidden;
+  flex-shrink: 0;
+  border: 2px solid var(--login-glass-border);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+  transition: transform 0.2s ease;
+}
+
+.theme-option-btn:hover .theme-swatch {
+  transform: scale(1.08);
+}
+
+.swatch-half {
+  flex: 1;
+  height: 100%;
+}
+
+.theme-option-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.theme-option-name {
+  font-size: 0.86rem;
+  font-weight: 700;
+  color: var(--login-text);
+  line-height: 1.2;
+}
+
+.theme-option-desc {
+  font-size: 0.72rem;
+  color: var(--login-text-muted);
+}
+
+.theme-check-icon {
+  font-size: 0.95rem;
+  color: var(--login-primary-light);
+  opacity: 0;
+  transform: scale(0.6);
+  transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+  font-weight: 800;
+}
+
+.theme-option-btn.active .theme-check-icon {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* --- Theme Specific Component Overrides for Login --- */
+
+/* Pink & White Theme Overrides */
+[data-theme="pink-light"] .login-bg__image {
+  opacity: 0.12;
+  filter: blur(2px);
+}
+
+[data-theme="pink-light"] .login-bg__gradient {
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.96) 0%,
+    rgba(253, 242, 246, 0.94) 35%,
+    rgba(252, 231, 243, 0.90) 70%,
+    rgba(151, 7, 71, 0.15) 100%
+  );
+}
+
+[data-theme="pink-light"] .login-bg__mesh {
+  background:
+    radial-gradient(ellipse at 20% 50%, rgba(151, 7, 71, 0.12) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 20%, rgba(219, 39, 119, 0.1) 0%, transparent 50%),
+    radial-gradient(ellipse at 60% 80%, rgba(151, 7, 71, 0.08) 0%, transparent 40%);
+}
+
+[data-theme="pink-light"] .login-branding {
+  background: linear-gradient(160deg, rgba(151, 7, 71, 0.1) 0%, rgba(219, 39, 119, 0.05) 100%);
+  border-right: 1px solid rgba(151, 7, 71, 0.15);
+}
+
+[data-theme="pink-light"] .branding-logo__text h1 {
+  background: linear-gradient(135deg, #970747 0%, #db2777 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+[data-theme="pink-light"] .branding-headline h2 {
+  color: #1d0714;
+}
+
+[data-theme="pink-light"] .branding-headline h2 span {
+  background: linear-gradient(135deg, #970747 0%, #e11d48 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+[data-theme="pink-light"] .branding-feature-pill {
+  background: #ffffff;
+  color: #73435c;
+  border: 1px solid #f3d7e5;
+  box-shadow: 0 2px 6px rgba(151, 7, 71, 0.06);
+}
+
+[data-theme="pink-light"] .login-form-panel {
+  background: rgba(255, 255, 255, 0.96);
+}
+
+[data-theme="pink-light"] .login-tabs {
+  background: #fdf2f6;
+  border: 1px solid #f3d7e5;
+}
+
+[data-theme="pink-light"] .login-demo-btn {
+  background: #ffffff;
+  border: 1px solid #f3d7e5;
+  color: #73435c;
+}
+
+[data-theme="pink-light"] .login-demo-btn:hover {
+  background: #fdf2f6;
+  border-color: #970747;
+  color: #970747;
+}
+
+[data-theme="pink-light"] .login-role-card {
+  background: #ffffff;
+  border-color: #f3d7e5;
+}
+
+[data-theme="pink-light"] .login-role-card:hover {
+  background: #fdf2f6;
+  border-color: #970747;
+}
+
+[data-theme="pink-light"] .login-theme-btn,
+[data-theme="pink-light"] .login-neon-status {
+  background: rgba(255, 255, 255, 0.85);
+  border-color: rgba(151, 7, 71, 0.2);
+  color: #73435c;
+  box-shadow: 0 2px 10px rgba(151, 7, 71, 0.08);
+}
+
+[data-theme="pink-light"] .theme-dropdown-menu {
+  background: rgba(255, 255, 255, 0.97);
+  border-color: rgba(151, 7, 71, 0.2);
+}
+
+/* Red & Black Theme Overrides */
+[data-theme="red-dark"] .login-bg__gradient {
+  background: linear-gradient(
+    135deg,
+    rgba(0, 0, 0, 0.98) 0%,
+    rgba(10, 2, 4, 0.95) 30%,
+    rgba(20, 3, 6, 0.92) 60%,
+    rgba(180, 18, 27, 0.25) 100%
+  );
+}
+
+[data-theme="red-dark"] .login-bg__mesh {
+  background:
+    radial-gradient(ellipse at 20% 50%, rgba(180, 18, 27, 0.2) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 20%, rgba(225, 29, 72, 0.12) 0%, transparent 50%),
+    radial-gradient(ellipse at 60% 80%, rgba(180, 18, 27, 0.15) 0%, transparent 40%);
+}
+
+[data-theme="red-dark"] .login-branding {
+  background: linear-gradient(160deg, rgba(180, 18, 27, 0.22) 0%, rgba(10, 2, 4, 0.9) 100%);
+  border-right: 1px solid rgba(180, 18, 27, 0.35);
+}
+
+[data-theme="red-dark"] .branding-logo__text h1 {
+  background: linear-gradient(135deg, #ffffff 0%, #ff6b76 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+[data-theme="red-dark"] .branding-headline h2 {
+  color: #ffffff;
+}
+
+[data-theme="red-dark"] .branding-headline h2 span {
+  background: linear-gradient(135deg, #ff4d5a 0%, #B4121B 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+[data-theme="red-dark"] .branding-feature-pill {
+  background: rgba(255, 255, 255, 0.05);
+  color: #cbd5e1;
+  border: 1px solid rgba(180, 18, 27, 0.4);
+}
+
+[data-theme="red-dark"] .login-form-panel {
+  background: rgba(12, 12, 14, 0.96);
+}
+
+[data-theme="red-dark"] .login-tabs {
+  background: #181113;
+  border: 1px solid #2e1316;
+}
+
+[data-theme="red-dark"] .login-demo-btn {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid #2e1316;
+  color: #cbd5e1;
+}
+
+[data-theme="red-dark"] .login-demo-btn:hover {
+  background: rgba(180, 18, 27, 0.15);
+  border-color: #B4121B;
+  color: #ffffff;
+}
+
+[data-theme="red-dark"] .login-role-card {
+  background: #141113;
+  border-color: #2e1316;
+}
+
+[data-theme="red-dark"] .login-role-card:hover {
+  background: rgba(180, 18, 27, 0.15);
+  border-color: #B4121B;
+}
+
+/* Light Theme Overrides */
+[data-theme="light"] .login-bg__image {
+  opacity: 0.15;
+  filter: blur(2px);
+}
+
+[data-theme="light"] .login-bg__gradient {
+  background: linear-gradient(
+    135deg,
+    rgba(248, 250, 252, 0.96) 0%,
+    rgba(241, 245, 249, 0.94) 35%,
+    rgba(226, 232, 240, 0.90) 70%,
+    rgba(13, 148, 136, 0.15) 100%
+  );
+}
+
+[data-theme="light"] .login-branding {
+  background: linear-gradient(160deg, rgba(13, 148, 136, 0.1) 0%, rgba(99, 102, 241, 0.05) 100%);
+  border-right: 1px solid rgba(13, 148, 136, 0.15);
+}
+
+[data-theme="light"] .branding-logo__text h1 {
+  background: linear-gradient(135deg, #0d9488 0%, #6366f1 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+[data-theme="light"] .branding-headline h2 {
+  color: #0f172a;
+}
+
+[data-theme="light"] .branding-headline h2 span {
+  background: linear-gradient(135deg, #0d9488 0%, #0284c7 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+[data-theme="light"] .branding-feature-pill {
+  background: #ffffff;
+  color: #64748b;
+  border: 1px solid #e2e8f0;
+}
+
+[data-theme="light"] .login-form-panel {
+  background: rgba(255, 255, 255, 0.96);
+}
+
+[data-theme="light"] .login-tabs {
+  background: #f1f5f9;
+  border: 1px solid #e2e8f0;
+}
+
+[data-theme="light"] .login-demo-btn {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  color: #64748b;
+}
+
+[data-theme="light"] .login-demo-btn:hover {
+  background: #f8fafc;
+  border-color: #0d9488;
+  color: #0d9488;
+}
+
+[data-theme="light"] .login-role-card {
+  background: #ffffff;
+  border-color: #e2e8f0;
+}
+
+[data-theme="light"] .login-theme-btn,
+[data-theme="light"] .login-neon-status {
+  background: rgba(255, 255, 255, 0.85);
+  border-color: rgba(13, 148, 136, 0.2);
+  color: #64748b;
+}
+
+[data-theme="light"] .theme-dropdown-menu {
+  background: rgba(255, 255, 255, 0.97);
+  border-color: rgba(13, 148, 136, 0.2);
 }
 
 /* --- Responsive Design --- */

@@ -6,6 +6,17 @@
   <title>CareSync | Sign In — Medicine Reminder & Health Tracker</title>
   <meta name="description" content="Sign in to CareSync, your personal medicine reminder and health tracking companion. Manage medications, monitor vitals, and connect with caregivers." />
   <link rel="stylesheet" href="/css/login.css" />
+  <script>
+    (function() {
+      try {
+        const saved = localStorage.getItem('MED_HEALTH_TRACKER_DATA_V2');
+        if (saved) {
+          const s = JSON.parse(saved);
+          if (s.theme) document.documentElement.setAttribute('data-theme', s.theme);
+        }
+      } catch (e) {}
+    })();
+  </script>
 </head>
 <body>
   <!-- Full-Screen Login Page -->
@@ -44,11 +55,81 @@
       </div>
     </div>
 
-    <!-- Neon DB Status Pill (top-right) -->
-    <button class="login-neon-status" id="login-neon-btn" title="Database Connection Status">
-      <span class="login-neon-status__dot" id="login-neon-dot"></span>
-      <span id="login-neon-label">Neon DB: Connecting...</span>
-    </button>
+    <!-- Top Right Action Cluster (Theme Switcher + Neon DB Status) -->
+    <div class="login-top-bar">
+      <!-- Theme Picker -->
+      <div class="theme-picker-container" style="position: relative;">
+        <button class="login-theme-btn" id="login-theme-btn" title="Choose Appearance Theme" aria-expanded="false">
+          <span id="login-theme-icon">🎨</span>
+          <span id="login-theme-label">Theme</span>
+        </button>
+        <div class="theme-dropdown-menu" id="login-theme-dropdown">
+          <div class="theme-menu-header">
+            <span class="theme-menu-title">Select Appearance</span>
+            <span class="theme-menu-badge" id="login-theme-badge">Theme</span>
+          </div>
+          <div class="theme-options-grid">
+            <!-- Option 1: Default Light (Clinical Teal) -->
+            <button class="theme-option-btn" data-theme-value="light" type="button">
+              <span class="theme-swatch swatch-light">
+                <span class="swatch-half swatch-half-primary" style="background: #0d9488;"></span>
+                <span class="swatch-half swatch-half-bg" style="background: #f8fafc;"></span>
+              </span>
+              <div class="theme-option-info">
+                <span class="theme-option-name">Clinical Light</span>
+                <span class="theme-option-desc">Teal &amp; Slate (Default)</span>
+              </div>
+              <span class="theme-check-icon">✓</span>
+            </button>
+
+            <!-- Option 2: Default Dark (Midnight Teal) -->
+            <button class="theme-option-btn" data-theme-value="dark" type="button">
+              <span class="theme-swatch swatch-dark">
+                <span class="swatch-half swatch-half-primary" style="background: #14b8a6;"></span>
+                <span class="swatch-half swatch-half-bg" style="background: #090d16;"></span>
+              </span>
+              <div class="theme-option-info">
+                <span class="theme-option-name">Midnight Dark</span>
+                <span class="theme-option-desc">Teal &amp; Deep Navy (Default)</span>
+              </div>
+              <span class="theme-check-icon">✓</span>
+            </button>
+
+            <!-- Option 3: Rose Light (Dark Pink #970747 & White) -->
+            <button class="theme-option-btn" data-theme-value="pink-light" type="button">
+              <span class="theme-swatch swatch-pink-light">
+                <span class="swatch-half swatch-half-primary" style="background: #970747;"></span>
+                <span class="swatch-half swatch-half-bg" style="background: #ffffff;"></span>
+              </span>
+              <div class="theme-option-info">
+                <span class="theme-option-name">Rose Light</span>
+                <span class="theme-option-desc">Dark Pink (#970747) &amp; White</span>
+              </div>
+              <span class="theme-check-icon">✓</span>
+            </button>
+
+            <!-- Option 4: Crimson Dark (Red #B4121B & Pure Black) -->
+            <button class="theme-option-btn" data-theme-value="red-dark" type="button">
+              <span class="theme-swatch swatch-red-dark">
+                <span class="swatch-half swatch-half-primary" style="background: #B4121B;"></span>
+                <span class="swatch-half swatch-half-bg" style="background: #000000;"></span>
+              </span>
+              <div class="theme-option-info">
+                <span class="theme-option-name">Crimson Dark</span>
+                <span class="theme-option-desc">Red (#B4121B) &amp; Black</span>
+              </div>
+              <span class="theme-check-icon">✓</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Neon DB Status Pill -->
+      <button class="login-neon-status" id="login-neon-btn" title="Database Connection Status">
+        <span class="login-neon-status__dot" id="login-neon-dot"></span>
+        <span id="login-neon-label">Neon DB: Connecting...</span>
+      </button>
+    </div>
 
     <!-- Main Login Container -->
     <div class="login-container">

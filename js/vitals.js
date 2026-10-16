@@ -194,9 +194,32 @@ export function renderChart(tab = 'bp') {
 
   const ctx = canvas.getContext('2d');
   const state = store.getState();
-  const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-  const gridColor = isDark ? '#243048' : '#e2e8f0';
-  const textColor = isDark ? '#94a3b8' : '#64748b';
+  const theme = document.documentElement.getAttribute('data-theme') || 'light';
+  const isDark = theme === 'dark' || theme === 'red-dark';
+  const isRed = theme === 'red-dark';
+  const isPink = theme === 'pink-light';
+
+  let gridColor = '#e2e8f0';
+  let textColor = '#64748b';
+  let primaryLineColor = '#0d9488';
+  let primaryFillColor = 'rgba(13, 148, 136, 0.12)';
+
+  if (isRed) {
+    gridColor = '#2b1417';
+    textColor = '#cbd5e1';
+    primaryLineColor = '#B4121B';
+    primaryFillColor = 'rgba(180, 18, 27, 0.18)';
+  } else if (isPink) {
+    gridColor = '#f3d7e5';
+    textColor = '#73435c';
+    primaryLineColor = '#970747';
+    primaryFillColor = 'rgba(151, 7, 71, 0.12)';
+  } else if (isDark) {
+    gridColor = '#243048';
+    textColor = '#94a3b8';
+    primaryLineColor = '#14b8a6';
+    primaryFillColor = 'rgba(20, 184, 166, 0.12)';
+  }
 
   if (activeChartInstance) {
     activeChartInstance.destroy();
@@ -214,23 +237,23 @@ export function renderChart(tab = 'bp') {
           {
             label: 'Systolic (Target < 120)',
             data: data.map(d => d.systolic),
-            borderColor: '#ef4444',
+            borderColor: isRed ? '#ff5460' : '#ef4444',
             backgroundColor: 'rgba(239, 68, 68, 0.12)',
             tension: 0.35,
             fill: false,
             borderWidth: 3,
-            pointBackgroundColor: '#ef4444',
+            pointBackgroundColor: isRed ? '#ff5460' : '#ef4444',
             pointRadius: 5
           },
           {
             label: 'Diastolic (Target < 80)',
             data: data.map(d => d.diastolic),
-            borderColor: '#0d9488',
-            backgroundColor: 'rgba(13, 148, 136, 0.12)',
+            borderColor: primaryLineColor,
+            backgroundColor: primaryFillColor,
             tension: 0.35,
             fill: false,
             borderWidth: 3,
-            pointBackgroundColor: '#0d9488',
+            pointBackgroundColor: primaryLineColor,
             pointRadius: 5
           }
         ]
