@@ -5,12 +5,158 @@ TDEE, and clinical macronutrient targets.
 """
 
 from datetime import datetime, date
+import calendar
 import json
 import sys
 
 
 class HealthMetricsCalculator:
-    """Core clinical calculator for patient biometrics and nutrition planning."""
+    """Core clinical calculator for patient biometrics, calendar intelligence and nutrition planning."""
+
+    @staticmethod
+    def get_zodiac(month: int, day: int) -> dict:
+        """Determines western astrological sign, symbol, and element."""
+        zodiacs = [
+            (1, 20, "Capricorn", "♑", "Earth"),
+            (2, 19, "Aquarius", "♒", "Air"),
+            (3, 20, "Pisces", "♓", "Water"),
+            (4, 20, "Aries", "♈", "Fire"),
+            (5, 21, "Taurus", "♉", "Earth"),
+            (6, 21, "Gemini", "♊", "Air"),
+            (7, 23, "Cancer", "♋", "Water"),
+            (8, 23, "Leo", "♌", "Fire"),
+            (9, 23, "Virgo", "♍", "Earth"),
+            (10, 23, "Libra", "♎", "Air"),
+            (11, 22, "Scorpio", "♏", "Water"),
+            (12, 22, "Sagittarius", "♐", "Fire"),
+            (12, 31, "Capricorn", "♑", "Earth")
+        ]
+        for m, d, sign, icon, elem in zodiacs:
+            if month < m or (month == m and day <= d):
+                return {"sign": sign, "icon": icon, "element": elem, "display": f"{icon} {sign} ({elem})"}
+        return {"sign": "Capricorn", "icon": "♑", "element": "Earth", "display": "♑ Capricorn (Earth)"}
+
+    @staticmethod
+    def get_chinese_zodiac(year: int) -> dict:
+        """Calculates Chinese Lunar animal sign based on 12-year cycle."""
+        animals = [
+            ("Rat", "🐀"), ("Ox", "🐂"), ("Tiger", "🐅"), ("Rabbit", "🐇"),
+            ("Dragon", "🐉"), ("Snake", "🐍"), ("Horse", "🐎"), ("Goat", "🐐"),
+            ("Monkey", "🐒"), ("Rooster", "🐓"), ("Dog", "🐕"), ("Pig", "🐖")
+        ]
+        idx = (year - 1900) % 12
+        name, icon = animals[idx]
+        return {"animal": name, "icon": icon, "display": f"{icon} Year of the {name}"}
+
+    @staticmethod
+    def get_generation(year: int) -> dict:
+        """Identifies sociological generational cohort."""
+        if year < 1928:
+            return {"name": "Greatest Generation", "icon": "🏛️", "desc": "Born before 1928"}
+        elif 1928 <= year <= 1945:
+            return {"name": "Silent Generation", "icon": "📻", "desc": "1928 – 1945"}
+        elif 1946 <= year <= 1964:
+            return {"name": "Baby Boomer", "icon": "👶", "desc": "1946 – 1964"}
+        elif 1965 <= year <= 1980:
+            return {"name": "Generation X", "icon": "📼", "desc": "1965 – 1980"}
+        elif 1981 <= year <= 1996:
+            return {"name": "Millennial (Gen Y)", "icon": "💻", "desc": "1981 – 1996"}
+        elif 1997 <= year <= 2012:
+            return {"name": "Generation Z", "icon": "📱", "desc": "1997 – 2012"}
+        else:
+            return {"name": "Generation Alpha", "icon": "🚀", "desc": "2013 – Present"}
+
+    @classmethod
+    def analyze_birth_date(cls, birth_date: str | date) -> dict:
+        """Full astronomical, chronological and clinical analysis of birth date."""
+        if isinstance(birth_date, str):
+            for fmt in ("%Y-%m-%d", "%d/%m/%Y", "%m/%d/%Y", "%Y/%m/%d"):
+                try:
+                    b_date = datetime.strptime(birth_date.strip(), fmt).date()
+                    break
+                except ValueError:
+                    continue
+            else:
+                raise ValueError(f"Unable to parse birth date: '{birth_date}'. Please use YYYY-MM-DD.")
+        else:
+            b_date = birth_date
+
+        today = date.today()
+        if b_date > today:
+            raise ValueError("Birth date cannot be in the future.")
+
+        age_dict = cls.calculate_age(b_date)
+        years = age_dict["years"]
+        months = age_dict["months"]
+        days = age_dict["days"]
+        total_days = age_dict["total_days_lived"]
+
+        weekday_name = b_date.strftime("%A")
+        month_name = b_date.strftime("%B")
+
+        try:
+            next_bday = date(today.year, b_date.month, b_date.day)
+            if next_bday < today:
+                next_bday = date(today.year + 1, b_date.month, b_date.day)
+        except ValueError:
+            next_bday = date(today.year, 3, 1) if date(today.year, 3, 1) >= today else date(today.year + 1, 3, 1)
+
+        days_until_next = (next_bday - today).days
+
+        if years >= 65:
+            guidance = "Priority: DEXA bone scan, cardiac rhythm checks, shingles & pneumococcal vaccination, fall safety."
+            life_stage = "Senior / Golden Years"
+            stage_icon = "🌟"
+        elif years >= 50:
+            guidance = "Priority: Colorectal health, blood pressure baseline, mammogram/prostate check, cholesterol panel."
+            life_stage = "Mature Adult"
+            stage_icon = "🌿"
+        elif years >= 30:
+            guidance = "Priority: Fasting blood glucose, metabolic panel, active cardiovascular endurance, stress balance."
+            life_stage = "Prime Adult"
+            stage_icon = "💪"
+        else:
+            guidance = "Priority: Nutritional baseline, hydration habit, preventative wellness and postural health."
+            life_stage = "Young Adult"
+            stage_icon = "⚡"
+
+        return {
+            "iso_date": b_date.isoformat(),
+            "display_date": f"{b_date.day} {month_name} {b_date.year}",
+            "full_long_date": f"{weekday_name}, {month_name} {b_date.day}, {b_date.year}",
+            "year": b_date.year,
+            "month": b_date.month,
+            "month_name": month_name,
+            "day": b_date.day,
+            "day_of_week": weekday_name,
+            "day_of_year": b_date.timetuple().tm_yday,
+            "is_leap_year": calendar.isleap(b_date.year),
+            "age": {
+                "years": years,
+                "months": months,
+                "days": days,
+                "total_days_lived": total_days,
+                "total_weeks_lived": round(total_days / 7, 1),
+                "total_hours_lived": total_days * 24,
+                "display": f"{years} years old",
+                "detailed_display": f"{years} yrs, {months} mos, {days} days"
+            },
+            "zodiac": cls.get_zodiac(b_date.month, b_date.day),
+            "chinese_zodiac": cls.get_chinese_zodiac(b_date.year),
+            "generation": cls.get_generation(b_date.year),
+            "next_birthday": {
+                "date": next_bday.isoformat(),
+                "days_remaining": days_until_next,
+                "day_of_week": next_bday.strftime("%A"),
+                "turning_age": years + 1,
+                "display": f"In {days_until_next} days ({next_bday.strftime('%A')})"
+            },
+            "clinical_guidance": {
+                "life_stage": life_stage,
+                "stage_icon": stage_icon,
+                "recommendation": guidance
+            }
+        }
 
     @staticmethod
     def calculate_age(birth_date: str | date) -> dict:
@@ -236,4 +382,14 @@ def main():
 if __name__ == "__main__":
     if hasattr(sys.stdout, "reconfigure"):
         sys.stdout.reconfigure(encoding="utf-8")
+    
+    if len(sys.argv) > 1 and sys.argv[1] == "--analyze":
+        dob = sys.argv[2] if len(sys.argv) > 2 else "1953-06-15"
+        try:
+            analysis = HealthMetricsCalculator.analyze_birth_date(dob)
+            print(json.dumps({"success": True, "data": analysis}))
+        except Exception as err:
+            print(json.dumps({"success": False, "error": str(err)}))
+        sys.exit(0)
+
     main()

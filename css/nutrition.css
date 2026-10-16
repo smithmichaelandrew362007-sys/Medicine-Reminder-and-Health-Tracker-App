@@ -872,6 +872,478 @@
   }
 }
 
+/* ─── Custom Interactive Date of Birth Picker ─── */
+.custom-dob-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 48px;
+  background: var(--bg-card);
+  border: 1.5px solid var(--border-light);
+  border-radius: var(--radius-md);
+  padding: 0 14px;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: var(--shadow-xs);
+  user-select: none;
+}
 
+.custom-dob-card:hover {
+  border-color: var(--primary-500);
+  background: var(--bg-subtle);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(13, 148, 136, 0.12);
+}
 
+[data-theme="pink-light"] .custom-dob-card:hover {
+  border-color: #970747;
+  box-shadow: 0 4px 12px rgba(151, 7, 71, 0.15);
+}
 
+[data-theme="red-dark"] .custom-dob-card {
+  background: #111012;
+  border-color: #2b1417;
+}
+
+[data-theme="red-dark"] .custom-dob-card:hover {
+  border-color: #B4121B;
+  box-shadow: 0 4px 14px rgba(180, 18, 27, 0.25);
+}
+
+.dob-card-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.dob-calendar-icon-box {
+  font-size: 1.3rem;
+  line-height: 1;
+}
+
+.dob-text-block {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.2;
+}
+
+.dob-main-text {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--text-main);
+  font-family: var(--font-heading);
+}
+
+.dob-sub-text {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+.dob-toggle-btn {
+  padding: 5px 12px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  border-radius: var(--radius-pill);
+}
+
+/* ─── Custom Date Popover ─── */
+.dob-popover {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  width: 100%;
+  min-width: 330px;
+  max-width: 400px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-xl);
+  z-index: 1000;
+  padding: 16px;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(-8px) scale(0.98);
+  transition: opacity 0.2s cubic-bezier(0.16, 1, 0.3, 1), transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.dob-popover.active {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0) scale(1);
+}
+
+.dob-popover-header {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.dob-nav-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.dob-nav-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1px solid var(--border-light);
+  background: var(--bg-subtle);
+  color: var(--text-main);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 1.2rem;
+  font-weight: 700;
+  transition: all 0.15s ease;
+}
+
+.dob-nav-btn:hover {
+  background: var(--primary-50);
+  border-color: var(--primary-400);
+  color: var(--primary-700);
+}
+
+.dob-select-cluster {
+  display: flex;
+  gap: 6px;
+  flex: 1;
+  justify-content: center;
+}
+
+.dob-select {
+  padding: 5px 10px;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--border-light);
+  background: var(--bg-card);
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--text-main);
+  outline: none;
+  cursor: pointer;
+  transition: border-color 0.15s ease;
+}
+
+.dob-select:focus {
+  border-color: var(--primary-500);
+}
+
+/* Decade Quick Jump Strip */
+.dob-decade-strip {
+  display: flex;
+  gap: 5px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+  scrollbar-width: thin;
+}
+
+.dob-decade-strip::-webkit-scrollbar {
+  height: 3px;
+}
+.dob-decade-strip::-webkit-scrollbar-thumb {
+  background: var(--border-light);
+  border-radius: 4px;
+}
+
+.dob-decade-pill {
+  padding: 3px 8px;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--border-light);
+  background: var(--bg-subtle);
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.15s ease;
+}
+
+.dob-decade-pill:hover,
+.dob-decade-pill.active {
+  background: var(--primary-500);
+  color: #fff;
+  border-color: var(--primary-500);
+  transform: translateY(-1px);
+}
+
+/* Days Grid */
+.dob-weekdays-row {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  text-align: center;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  padding: 4px 0 6px 0;
+  border-bottom: 1px solid var(--border-light);
+  margin-bottom: 6px;
+}
+
+.dob-days-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+  text-align: center;
+}
+
+.dob-day-cell {
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  font-size: 0.84rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  background: transparent;
+  color: var(--text-main);
+  transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.dob-day-cell:hover:not(:disabled) {
+  background: var(--bg-hover);
+  transform: scale(1.12);
+  color: var(--primary-600);
+}
+
+.dob-day-cell.selected {
+  background: var(--primary-500) !important;
+  color: #fff !important;
+  font-weight: 800;
+  box-shadow: 0 0 12px var(--primary-500);
+  transform: scale(1.1);
+}
+
+.dob-day-cell.other-month {
+  color: var(--text-subtle);
+  opacity: 0.35;
+}
+
+.dob-day-cell.today {
+  border: 1.5px solid var(--primary-500);
+}
+
+/* Popover Footer & Presets */
+.dob-popover-footer {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid var(--border-light);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.dob-quick-presets {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  flex-wrap: wrap;
+}
+
+.dob-preset-pill {
+  padding: 2px 7px;
+  border-radius: var(--radius-pill);
+  border: 1px dashed var(--border-light);
+  background: var(--bg-subtle);
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--primary-600);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.dob-preset-pill:hover {
+  background: var(--primary-50);
+  border-color: var(--primary-500);
+  color: var(--primary-700);
+  transform: scale(1.04);
+}
+
+.dob-footer-btns {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* ─── Python Bio-Chronology Intelligence Card ─── */
+.python-bio-card {
+  margin-top: 14px;
+  background: linear-gradient(135deg, rgba(13, 148, 136, 0.05), rgba(99, 102, 241, 0.06));
+  border: 1px solid rgba(13, 148, 136, 0.22);
+  border-radius: var(--radius-lg);
+  padding: 14px 16px;
+  transition: all 0.3s ease;
+}
+
+[data-theme="pink-light"] .python-bio-card {
+  background: linear-gradient(135deg, rgba(151, 7, 71, 0.05), rgba(219, 39, 119, 0.06));
+  border-color: rgba(151, 7, 71, 0.22);
+}
+
+[data-theme="red-dark"] .python-bio-card {
+  background: linear-gradient(135deg, rgba(180, 18, 27, 0.14), rgba(20, 5, 8, 0.85));
+  border-color: rgba(180, 18, 27, 0.35);
+}
+
+.python-bio-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.python-bio-brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 800;
+  font-size: 0.86rem;
+  color: var(--text-main);
+  font-family: var(--font-heading);
+}
+
+.python-logo-icon {
+  font-size: 1.15rem;
+}
+
+.python-status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #10b981;
+  background: rgba(16, 185, 129, 0.12);
+  padding: 3px 9px;
+  border-radius: var(--radius-pill);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.python-pulse-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #10b981;
+  animation: pulse 1.8s infinite;
+}
+
+.python-metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.python-metric-pill {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-light);
+  padding: 8px 10px;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-xs);
+  transition: transform 0.15s ease;
+}
+
+.python-metric-pill:hover {
+  transform: translateY(-1px);
+}
+
+.pmp-icon {
+  font-size: 1.2rem;
+  flex-shrink: 0;
+}
+
+.pmp-content {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  line-height: 1.2;
+}
+
+.pmp-label {
+  font-size: 0.66rem;
+  color: var(--text-muted);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.pmp-val {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--text-main);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-top: 2px;
+}
+
+.python-bio-guidance {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 12px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
+  flex-wrap: wrap;
+}
+
+.pbg-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+  min-width: 220px;
+}
+
+.pbg-icon {
+  font-size: 1.3rem;
+  flex-shrink: 0;
+}
+
+.pbg-text {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.25;
+}
+
+.pbg-stage {
+  font-size: 0.8rem;
+  font-weight: 800;
+  color: var(--primary-600);
+}
+
+[data-theme="pink-light"] .pbg-stage {
+  color: #970747;
+}
+
+[data-theme="red-dark"] .pbg-stage {
+  color: #ff5460;
+}
+
+.pbg-desc {
+  font-size: 0.73rem;
+  color: var(--text-muted);
+  line-height: 1.35;
+  margin-top: 2px;
+}
+
+.pbg-next-bday {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #6366f1;
+  background: rgba(99, 102, 241, 0.1);
+  padding: 4px 10px;
+  border-radius: var(--radius-pill);
+  white-space: nowrap;
+}

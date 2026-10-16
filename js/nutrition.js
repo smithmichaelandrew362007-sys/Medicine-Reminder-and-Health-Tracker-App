@@ -114,7 +114,11 @@ export function openBodyQuestionnaire() {
   const dobInput = document.getElementById('bq-dob-input');
   if (ageInput) ageInput.value = questionnaireData.age;
   if (ageBadge) ageBadge.textContent = `${questionnaireData.age} yrs`;
-  if (dobInput) dobInput.value = approximateDobFromAge(questionnaireData.age);
+  const initialDob = approximateDobFromAge(questionnaireData.age);
+  if (dobInput) dobInput.value = initialDob;
+  if (typeof window.syncCustomDobFromDate === 'function') {
+    window.syncCustomDobFromDate(initialDob);
+  }
 
   const genderSelect = document.getElementById('bq-gender-select');
   if (genderSelect) genderSelect.value = questionnaireData.gender;
@@ -224,36 +228,34 @@ function setupBodyQuestionnaire() {
   const ageDecBtn = document.getElementById('bq-age-dec');
   const ageIncBtn = document.getElementById('bq-age-inc');
 
-  if (dobInput) {
-    dobInput.addEventListener('change', () => {
-      if (!dobInput.value) return;
-      const birth = new Date(dobInput.value);
-      const today = new Date();
-      let age = today.getFullYear() - birth.getFullYear();
-      const m = today.getMonth() - birth.getMonth();
-      if (m < 0 || (m === 0 && today.getDate() < birth.getDate())) {
-        age--;
-      }
-      age = Math.max(1, Math.min(120, age));
-      if (ageInput) ageInput.value = age;
-      if (ageBadge) ageBadge.textContent = `${age} yrs`;
-      questionnaireData.age = age;
-      updateBmiPreview();
-    });
-  }
-
   const setAge = (newAge) => {
     const val = Math.max(1, Math.min(120, newAge));
+    questionnaireData.age = val;
     if (ageInput) ageInput.value = val;
     if (ageBadge) ageBadge.textContent = `${val} yrs`;
-    if (dobInput) dobInput.value = approximateDobFromAge(val);
-    questionnaireData.age = val;
-    updateBmiPreview();
+
+    // Derive new DOB preserving month and day
+    let currentIso = dobInput?.value || '1961-06-15';
+    let parts = currentIso.split('-');
+    let mm = parts[1] || '06';
+    let dd = parts[2] || '15';
+    const newYear = new Date().getFullYear() - val;
+    const newIso = `${newYear}-${mm}-${dd}`;
+
+    if (typeof window.syncCustomDobFromDate === 'function') {
+      window.syncCustomDobFromDate(newIso);
+    } else {
+      if (dobInput) dobInput.value = newIso;
+      updateBmiPreview();
+    }
   };
 
-  ageDecBtn?.addEventListener('click', () => setAge((parseInt(ageInput?.value, 10) || 70) - 1));
-  ageIncBtn?.addEventListener('click', () => setAge((parseInt(ageInput?.value, 10) || 70) + 1));
-  ageInput?.addEventListener('input', () => setAge(parseInt(ageInput.value, 10) || 70));
+  ageDecBtn?.addEventListener('click', () => setAge((parseInt(ageInput?.value, 10) || 65) - 1));
+  ageIncBtn?.addEventListener('click', () => setAge((parseInt(ageInput?.value, 10) || 65) + 1));
+  ageInput?.addEventListener('input', () => setAge(parseInt(ageInput.value, 10) || 65));
+
+  // Initialize Custom Visual Calendar & Python Bio-Chronology Engine
+  setupCustomDobCalendar();
 
   // 2. Height Slider & Steppers
   const heightRange = document.getElementById('bq-height-range');
@@ -498,6 +500,408 @@ function updateStepView() {
       nextBtn.className = 'btn btn-primary';
     }
   }
+}
+
+/**
+ * Setup Custom Attractive Interactive Visual Calendar & Python Bio-Chronology Engine
+ */
+function setupCustomDobCalendar() {
+  const triggerCard = document.getElementById('dob-card-trigger');
+  const toggleBtn = document.getElementById('btn-toggle-custom-calendar');
+  const popover = document.getElementById('dob-popover');
+  const monthSelect = document.getElementById('dob-month-select');
+  const yearSelect = document.getElementById('dob-year-select');
+  const prevMonthBtn = document.getElementById('dob-prev-month');
+  const nextMonthBtn = document.getElementById('dob-next-month');
+  const daysGrid = document.getElementById('dob-days-grid');
+  const decadeStrip = document.getElementById('dob-decade-strip');
+  const dobInput = document.getElementById('bq-dob-input');
+  const btnToday = document.getElementById('dob-btn-today');
+  const btnConfirm = document.getElementById('dob-btn-confirm');
+  const presetBtns = document.querySelectorAll('.dob-preset-pill');
+
+  if (!popover || !dobInput) return;
+
+  // Calendar State
+  let currentDate = dobInput.value ? new Date(dobInput.value + 'T00:00:00') : new Date(1961, 5, 15);
+  if (isNaN(currentDate.getTime())) currentDate = new Date(1961, 5, 15);
+
+  let viewYear = currentDate.getFullYear();
+  let viewMonth = currentDate.getMonth(); // 0 - 11
+
+  // Populate Year Dropdown (1920 to Current Year, descending)
+  const currentSystemYear = new Date().getFullYear();
+  if (yearSelect && yearSelect.options.length <= 1) {
+    yearSelect.innerHTML = '';
+    for (let y = currentSystemYear; y >= 1920; y--) {
+      const opt = document.createElement('option');
+      opt.value = y;
+      opt.textContent = y;
+      if (y === viewYear) opt.selected = true;
+      yearSelect.appendChild(opt);
+    }
+  }
+
+  // Format ISO YYYY-MM-DD
+  const formatIsoDate = (year, month, day) => {
+    const mm = String(month + 1).padStart(2, '0');
+    const dd = String(day).padStart(2, '0');
+    return `${year}-${mm}-${dd}`;
+  };
+
+  // Sync active decade pill
+  const updateDecadePill = (year) => {
+    const decadeBase = Math.floor(year / 10) * 10;
+    decadeStrip?.querySelectorAll('.dob-decade-pill').forEach(pill => {
+      const pillDecade = parseInt(pill.getAttribute('data-decade'), 10);
+      if (pillDecade === decadeBase) {
+        pill.classList.add('active');
+      } else {
+        pill.classList.remove('active');
+      }
+    });
+  };
+
+  // Render Days Grid
+  const renderDaysGrid = () => {
+    if (!daysGrid) return;
+    daysGrid.innerHTML = '';
+
+    if (monthSelect) monthSelect.value = viewMonth;
+    if (yearSelect) yearSelect.value = viewYear;
+    updateDecadePill(viewYear);
+
+    const totalDays = new Date(viewYear, viewMonth + 1, 0).getDate();
+    // Monday-based day of week (Monday=0 ... Sunday=6)
+    const firstDayDow = (new Date(viewYear, viewMonth, 1).getDay() + 6) % 7;
+
+    // Previous month padding
+    const prevMonthDays = new Date(viewYear, viewMonth, 0).getDate();
+    for (let i = firstDayDow - 1; i >= 0; i--) {
+      const dayNum = prevMonthDays - i;
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'dob-day-cell outside';
+      btn.textContent = dayNum;
+      btn.setAttribute('tabindex', '-1');
+      btn.addEventListener('click', () => {
+        if (viewMonth === 0) {
+          viewYear--;
+          viewMonth = 11;
+        } else {
+          viewMonth--;
+        }
+        selectDate(viewYear, viewMonth, dayNum);
+      });
+      daysGrid.appendChild(btn);
+    }
+
+    // Days in current month
+    const today = new Date();
+    const isCurrentMonthThisMonth = today.getFullYear() === viewYear && today.getMonth() === viewMonth;
+    const isSelectedMonthCurrent = currentDate.getFullYear() === viewYear && currentDate.getMonth() === viewMonth;
+
+    for (let day = 1; day <= totalDays; day++) {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'dob-day-cell';
+      btn.textContent = day;
+
+      if (isSelectedMonthCurrent && currentDate.getDate() === day) {
+        btn.classList.add('selected');
+      }
+      if (isCurrentMonthThisMonth && today.getDate() === day) {
+        btn.classList.add('today');
+      }
+
+      btn.addEventListener('click', () => {
+        selectDate(viewYear, viewMonth, day, true);
+      });
+
+      daysGrid.appendChild(btn);
+    }
+
+    // Trailing padding to complete grid
+    const filledCells = firstDayDow + totalDays;
+    const nextCells = (7 - (filledCells % 7)) % 7;
+    for (let nextDay = 1; nextDay <= nextCells; nextDay++) {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'dob-day-cell outside';
+      btn.textContent = nextDay;
+      btn.setAttribute('tabindex', '-1');
+      btn.addEventListener('click', () => {
+        if (viewMonth === 11) {
+          viewYear++;
+          viewMonth = 0;
+        } else {
+          viewMonth++;
+        }
+        selectDate(viewYear, viewMonth, nextDay);
+      });
+      daysGrid.appendChild(btn);
+    }
+  };
+
+  // Select a date and invoke Python analysis
+  const selectDate = (year, month, day, closeAfterSelect = false) => {
+    currentDate = new Date(year, month, day);
+    viewYear = year;
+    viewMonth = month;
+
+    const isoStr = formatIsoDate(year, month, day);
+    dobInput.value = isoStr;
+
+    renderDaysGrid();
+    analyzeDobWithPython(isoStr);
+
+    if (closeAfterSelect) {
+      setTimeout(() => {
+        popover.classList.remove('active');
+      }, 160);
+    }
+  };
+
+  // Decade strip click
+  decadeStrip?.addEventListener('click', (e) => {
+    const pill = e.target.closest('.dob-decade-pill');
+    if (!pill) return;
+    const targetDecade = parseInt(pill.getAttribute('data-decade'), 10);
+    viewYear = targetDecade + 5;
+    const maxDayInTarget = new Date(viewYear, viewMonth + 1, 0).getDate();
+    const clampedDay = Math.min(currentDate.getDate(), maxDayInTarget);
+    selectDate(viewYear, viewMonth, clampedDay);
+  });
+
+  // Month & Year select changes
+  monthSelect?.addEventListener('change', () => {
+    viewMonth = parseInt(monthSelect.value, 10);
+    const maxDay = new Date(viewYear, viewMonth + 1, 0).getDate();
+    const clampedDay = Math.min(currentDate.getDate(), maxDay);
+    selectDate(viewYear, viewMonth, clampedDay);
+  });
+
+  yearSelect?.addEventListener('change', () => {
+    viewYear = parseInt(yearSelect.value, 10);
+    const maxDay = new Date(viewYear, viewMonth + 1, 0).getDate();
+    const clampedDay = Math.min(currentDate.getDate(), maxDay);
+    selectDate(viewYear, viewMonth, clampedDay);
+  });
+
+  // Prev / Next Month
+  prevMonthBtn?.addEventListener('click', () => {
+    if (viewMonth === 0) {
+      viewYear--;
+      viewMonth = 11;
+    } else {
+      viewMonth--;
+    }
+    const maxDay = new Date(viewYear, viewMonth + 1, 0).getDate();
+    const clampedDay = Math.min(currentDate.getDate(), maxDay);
+    selectDate(viewYear, viewMonth, clampedDay);
+  });
+
+  nextMonthBtn?.addEventListener('click', () => {
+    if (viewMonth === 11) {
+      viewYear++;
+      viewMonth = 0;
+    } else {
+      viewMonth++;
+    }
+    const maxDay = new Date(viewYear, viewMonth + 1, 0).getDate();
+    const clampedDay = Math.min(currentDate.getDate(), maxDay);
+    selectDate(viewYear, viewMonth, clampedDay);
+  });
+
+  // Fast Presets (e.g. 65y, 70y, 50y, 30y)
+  presetBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const ageVal = parseInt(btn.getAttribute('data-age'), 10) || 65;
+      const targetYear = currentSystemYear - ageVal;
+      selectDate(targetYear, 5, 15); // June 15th
+    });
+  });
+
+  // Today button
+  btnToday?.addEventListener('click', () => {
+    const now = new Date();
+    selectDate(now.getFullYear(), now.getMonth(), now.getDate());
+  });
+
+  // Confirm button
+  btnConfirm?.addEventListener('click', () => {
+    popover.classList.remove('active');
+  });
+
+  // Popover toggling
+  const togglePopover = (e) => {
+    e.stopPropagation();
+    const isActive = popover.classList.contains('active');
+    if (!isActive) {
+      if (dobInput.value) {
+        const parts = dobInput.value.split('-').map(Number);
+        if (parts.length === 3) {
+          viewYear = parts[0];
+          viewMonth = parts[1] - 1;
+          currentDate = new Date(viewYear, viewMonth, parts[2]);
+        }
+      }
+      renderDaysGrid();
+      popover.classList.add('active');
+    } else {
+      popover.classList.remove('active');
+    }
+  };
+
+  triggerCard?.addEventListener('click', (e) => {
+    if (e.target.closest('#btn-toggle-custom-calendar')) return;
+    togglePopover(e);
+  });
+  toggleBtn?.addEventListener('click', togglePopover);
+
+  // Close when clicking outside
+  document.addEventListener('click', (e) => {
+    if (popover.classList.contains('active')) {
+      if (!popover.contains(e.target) && !triggerCard?.contains(e.target)) {
+        popover.classList.remove('active');
+      }
+    }
+  });
+
+  // Expose global helper to synchronize DOB and Python analysis
+  window.syncCustomDobFromDate = (isoStr) => {
+    if (!isoStr) return;
+    const parts = isoStr.split('-').map(Number);
+    if (parts.length === 3) {
+      viewYear = parts[0];
+      viewMonth = parts[1] - 1;
+      currentDate = new Date(viewYear, viewMonth, parts[2]);
+      if (dobInput) dobInput.value = isoStr;
+      renderDaysGrid();
+      analyzeDobWithPython(isoStr);
+    }
+  };
+
+  // Initial render & analysis
+  renderDaysGrid();
+  if (dobInput.value) {
+    analyzeDobWithPython(dobInput.value);
+  }
+}
+
+/**
+ * Call Python Bio-Chronology Engine via /api/calendar/analyze-dob
+ * Updates the UI with exact age, total days/weeks/hours lived, zodiac, Chinese zodiac,
+ * generation cohort, clinical life stage recommendations, and next birthday countdown.
+ */
+async function analyzeDobWithPython(dobString) {
+  const mainDisplay = document.getElementById('dob-display-main');
+  const subDisplay = document.getElementById('dob-display-weekday');
+  const ageInput = document.getElementById('bq-age-input');
+  const ageBadge = document.getElementById('bq-age-badge');
+  const exactAgeBadge = document.getElementById('py-exact-age');
+  const zodiacBadge = document.getElementById('py-zodiac');
+  const chineseZodiacBadge = document.getElementById('py-chinese-zodiac');
+  const genBadge = document.getElementById('py-generation');
+  const stageIcon = document.getElementById('py-stage-icon');
+  const stageName = document.getElementById('py-stage-name');
+  const recoText = document.getElementById('py-recommendation');
+  const nextBday = document.getElementById('py-next-bday');
+  const enginePill = document.getElementById('python-engine-pill');
+
+  if (!dobString) return;
+
+  try {
+    const res = await fetch('/api/calendar/analyze-dob', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ dob: dobString })
+    });
+
+    if (!res.ok) throw new Error(`HTTP error ${res.status}`);
+    const result = await res.json();
+
+    if (result.success && result.data) {
+      const d = result.data;
+
+      // Update date displays
+      if (mainDisplay) mainDisplay.textContent = d.display_date;
+      if (subDisplay) subDisplay.textContent = `${d.day_of_week} • Born in ${d.year} (${d.generation.name})`;
+
+      // Update age stepper and badge
+      const calculatedAge = d.age.years;
+      questionnaireData.age = calculatedAge;
+      if (ageInput) ageInput.value = calculatedAge;
+      if (ageBadge) ageBadge.textContent = `${calculatedAge} yrs`;
+
+      // Update Python Bio-Chronology Cards
+      if (exactAgeBadge) {
+        exactAgeBadge.textContent = `${d.age.years} yrs, ${d.age.months} mos (${d.age.total_days_lived.toLocaleString()} days)`;
+      }
+      if (zodiacBadge) {
+        zodiacBadge.textContent = `${d.zodiac.sign} ${d.zodiac.icon} (${d.zodiac.element})`;
+      }
+      if (chineseZodiacBadge) {
+        chineseZodiacBadge.textContent = d.chinese_zodiac.display;
+      }
+      if (genBadge) {
+        genBadge.textContent = `${d.generation.name} (${d.generation.desc})`;
+      }
+      if (stageIcon) stageIcon.textContent = d.clinical_guidance.stage_icon || '🌟';
+      if (stageName) stageName.textContent = `${d.clinical_guidance.life_stage} (Age ${d.age.years})`;
+      if (recoText) recoText.textContent = d.clinical_guidance.recommendation;
+      if (nextBday) {
+        nextBday.textContent = `🎈 Next Birthday in ${d.next_birthday.days_remaining} days (${d.next_birthday.day_of_week})`;
+      }
+      if (enginePill) {
+        enginePill.innerHTML = '<span class="python-pulse-dot"></span><span>Python 3.14 Connected</span>';
+      }
+
+      updateBmiPreview();
+      return;
+    }
+  } catch (err) {
+    console.warn('[CareSync] Python DOB microservice fallback to local JS calculation:', err);
+  }
+
+  // Graceful client fallback if server offline
+  fallbackDobAnalysis(dobString);
+}
+
+/**
+ * Fallback date of birth calculation if offline
+ */
+function fallbackDobAnalysis(dobString) {
+  const parts = dobString.split('-').map(Number);
+  if (parts.length !== 3) return;
+  const birth = new Date(parts[0], parts[1] - 1, parts[2]);
+  const today = new Date();
+  let years = today.getFullYear() - birth.getFullYear();
+  let m = today.getMonth() - birth.getMonth();
+  if (m < 0 || (m === 0 && today.getDate() < birth.getDate())) {
+    years--;
+    m = (m + 12) % 12;
+  }
+  const age = Math.max(1, Math.min(120, years));
+  questionnaireData.age = age;
+
+  const ageInput = document.getElementById('bq-age-input');
+  const ageBadge = document.getElementById('bq-age-badge');
+  const mainDisplay = document.getElementById('dob-display-main');
+  const subDisplay = document.getElementById('dob-display-weekday');
+  const exactAgeBadge = document.getElementById('py-exact-age');
+
+  if (ageInput) ageInput.value = age;
+  if (ageBadge) ageBadge.textContent = `${age} yrs`;
+
+  const monthNames = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+  const dayNames = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+
+  if (mainDisplay) mainDisplay.textContent = `${parts[2]} ${monthNames[parts[1] - 1]} ${parts[0]}`;
+  if (subDisplay) subDisplay.textContent = `${dayNames[birth.getDay()]} • Born in ${parts[0]}`;
+  if (exactAgeBadge) exactAgeBadge.textContent = `${age} yrs (${Math.round((today - birth) / (1000*60*60*24)).toLocaleString()} days)`;
+
+  updateBmiPreview();
 }
 
 /**

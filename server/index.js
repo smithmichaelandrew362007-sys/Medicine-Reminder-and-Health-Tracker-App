@@ -8,6 +8,7 @@ import crypto from 'crypto';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { execFile } from 'child_process';
 import { initDatabase, getDbStatus, getSql } from './db.js';
 import { generateGeminiNutritionPlan, chatWithGeminiNutrition, analyzeMealCalories } from './ai.js';
 
@@ -18,6 +19,45 @@ const envFilePath = path.join(__dirname, '..', '.env');
 const app = express();
 app.use(cors());
 app.use(express.json());
+
+/**
+ * 0. Python Calendar & Date Intelligence Endpoint
+ */
+app.post('/api/calendar/analyze-dob', async (req, res) => {
+  const { birthDate, dob, birth_date } = req.body || {};
+  const targetDate = (birthDate || dob || birth_date || '1961-06-15').trim();
+
+  // 1. Try Python HTTP microservice first (ultra-fast)
+  try {
+    const pythonResponse = await fetch('http://127.0.0.1:5050/api/calendar/analyze-dob', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ birth_date: targetDate }),
+      signal: AbortSignal.timeout(1200)
+    });
+    if (pythonResponse.ok) {
+      const data = await pythonResponse.json();
+      return res.json(data);
+    }
+  } catch (err) {
+    // Microservice standby, continue to fallback
+  }
+
+  // 2. Direct Python process fallback
+  const scriptPath = path.join(__dirname, '..', 'python', 'health_calculator.py');
+  execFile('python', [scriptPath, '--analyze', targetDate], { encoding: 'utf-8' }, (error, stdout, stderr) => {
+    if (error) {
+      console.error('Python date analysis error:', error, stderr);
+      return res.status(500).json({ success: false, error: error.message });
+    }
+    try {
+      const parsed = JSON.parse(stdout.trim());
+      return res.json(parsed);
+    } catch (parseErr) {
+      return res.status(500).json({ success: false, error: 'Failed to parse Python engine output' });
+    }
+  });
+});
 
 // In-memory local fallback store (clean slate)
 const localStore = {

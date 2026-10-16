@@ -1476,25 +1476,165 @@
             </div>
           </div>
 
-          <!-- Row 2: Date of Birth Calendar Picker & Computed Age Stepper -->
+          <!-- Row 2: Date of Birth Visual Calendar Picker & Computed Age Stepper -->
           <div class="form-grid-2" style="margin-top: 14px;">
-            <div class="form-group">
+            <div class="form-group" style="position: relative;">
               <div class="bq-picker-header">
-                <label class="form-label" for="bq-dob-input" style="margin:0;">📅 Date of Birth</label>
-                <span class="bq-picker-hint">Calendar Selector</span>
+                <label class="form-label" style="margin:0;">📅 Date of Birth *</label>
+                <span class="bq-picker-hint">✨ Python-Powered Calendar</span>
               </div>
-              <input type="date" id="bq-dob-input" class="form-input" value="1953-06-15" max="2026-10-16" />
+              
+              <!-- Custom Interactive Date Trigger Card -->
+              <div class="custom-dob-card" id="dob-card-trigger" title="Click to choose birth date">
+                <div class="dob-card-left">
+                  <div class="dob-calendar-icon-box">📅</div>
+                  <div class="dob-text-block">
+                    <span class="dob-main-text" id="dob-display-main">15 June 1961</span>
+                    <span class="dob-sub-text" id="dob-display-weekday">Thursday • Born in 1961</span>
+                  </div>
+                </div>
+                <button type="button" class="btn btn-sm btn-secondary dob-toggle-btn" id="btn-toggle-custom-calendar" title="Open Visual Calendar">
+                  <span>🗓️ Change</span>
+                </button>
+              </div>
+
+              <!-- Hidden Form Input preserving compatibility -->
+              <input type="hidden" id="bq-dob-input" value="1961-06-15" />
+
+              <!-- Custom Attractive Date Picker Popover -->
+              <div class="dob-popover" id="dob-popover">
+                <div class="dob-popover-header">
+                  <div class="dob-nav-row">
+                    <button type="button" class="dob-nav-btn" id="dob-prev-month" title="Previous Month">‹</button>
+                    <div class="dob-select-cluster">
+                      <select id="dob-month-select" class="dob-select dob-month-select" aria-label="Select Month">
+                        <option value="0">January</option>
+                        <option value="1">February</option>
+                        <option value="2">March</option>
+                        <option value="3">April</option>
+                        <option value="4">May</option>
+                        <option value="5" selected>June</option>
+                        <option value="6">July</option>
+                        <option value="7">August</option>
+                        <option value="8">September</option>
+                        <option value="9">October</option>
+                        <option value="10">November</option>
+                        <option value="11">December</option>
+                      </select>
+                      <select id="dob-year-select" class="dob-select dob-year-select" aria-label="Select Year">
+                        <!-- Populated dynamically from 1920 to current year -->
+                      </select>
+                    </div>
+                    <button type="button" class="dob-nav-btn" id="dob-next-month" title="Next Month">›</button>
+                  </div>
+
+                  <!-- Decade Quick Jumps Strip -->
+                  <div class="dob-decade-strip" id="dob-decade-strip" title="Jump to decade">
+                    <button type="button" class="dob-decade-pill" data-decade="1940">1940s</button>
+                    <button type="button" class="dob-decade-pill" data-decade="1950">1950s</button>
+                    <button type="button" class="dob-decade-pill active" data-decade="1960">1960s</button>
+                    <button type="button" class="dob-decade-pill" data-decade="1970">1970s</button>
+                    <button type="button" class="dob-decade-pill" data-decade="1980">1980s</button>
+                    <button type="button" class="dob-decade-pill" data-decade="1990">1990s</button>
+                    <button type="button" class="dob-decade-pill" data-decade="2000">2000s</button>
+                    <button type="button" class="dob-decade-pill" data-decade="2010">2010s</button>
+                  </div>
+                </div>
+
+                <!-- Days of Week Header -->
+                <div class="dob-weekdays-row">
+                  <span>Mo</span><span>Tu</span><span>We</span><span>Th</span><span>Fr</span><span>Sa</span><span>Su</span>
+                </div>
+
+                <!-- Interactive Days Grid -->
+                <div class="dob-days-grid" id="dob-days-grid">
+                  <!-- Generated dynamically -->
+                </div>
+
+                <!-- Fast Presets & Footer -->
+                <div class="dob-popover-footer">
+                  <div class="dob-quick-presets">
+                    <span style="font-size:0.7rem; color:var(--text-muted); font-weight:600;">Fast Jumps:</span>
+                    <button type="button" class="dob-preset-pill" data-age="65">65y (1961)</button>
+                    <button type="button" class="dob-preset-pill" data-age="70">70y (1956)</button>
+                    <button type="button" class="dob-preset-pill" data-age="50">50y (1976)</button>
+                    <button type="button" class="dob-preset-pill" data-age="30">30y (1996)</button>
+                  </div>
+                  <div class="dob-footer-btns">
+                    <button type="button" class="btn btn-sm btn-ghost" id="dob-btn-today">Today</button>
+                    <button type="button" class="btn btn-sm btn-primary" id="dob-btn-confirm">✓ Done</button>
+                  </div>
+                </div>
+              </div>
             </div>
 
             <div class="form-group">
               <div class="bq-picker-header">
                 <label class="form-label" for="bq-age-input" style="margin:0;">🎂 Age (years) *</label>
-                <span id="bq-age-badge" class="bq-metric-val-badge">73 yrs</span>
+                <span id="bq-age-badge" class="bq-metric-val-badge">65 yrs</span>
               </div>
               <div class="bq-stepper-box">
                 <button type="button" class="bq-step-btn" id="bq-age-dec" title="Decrease Age by 1">−</button>
-                <input type="number" id="bq-age-input" class="bq-stepper-input" value="73" min="1" max="120" required />
+                <input type="number" id="bq-age-input" class="bq-stepper-input" value="65" min="1" max="120" required />
                 <button type="button" class="bq-step-btn" id="bq-age-inc" title="Increase Age by 1">+</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Python Bio-Chronology Intelligence Card -->
+          <div class="python-bio-card" id="python-bio-card">
+            <div class="python-bio-header">
+              <div class="python-bio-brand">
+                <span class="python-logo-icon">🐍</span>
+                <span class="python-bio-title">Python Bio-Chronology Engine</span>
+              </div>
+              <span class="python-status-pill" id="python-engine-pill">
+                <span class="python-pulse-dot"></span>
+                <span>Python 3.14 Active</span>
+              </span>
+            </div>
+
+            <div class="python-metrics-grid">
+              <div class="python-metric-pill">
+                <span class="pmp-icon">🎂</span>
+                <div class="pmp-content">
+                  <span class="pmp-label">Exact Age & Life Span</span>
+                  <span class="pmp-val" id="py-exact-age">65 yrs, 4 mos (23,864 days)</span>
+                </div>
+              </div>
+              <div class="python-metric-pill">
+                <span class="pmp-icon">♊</span>
+                <div class="pmp-content">
+                  <span class="pmp-label">Western Zodiac</span>
+                  <span class="pmp-val" id="py-zodiac">Gemini ♊ (Air)</span>
+                </div>
+              </div>
+              <div class="python-metric-pill">
+                <span class="pmp-icon">🐂</span>
+                <div class="pmp-content">
+                  <span class="pmp-label">Chinese Zodiac</span>
+                  <span class="pmp-val" id="py-chinese-zodiac">Year of the Ox 🐂</span>
+                </div>
+              </div>
+              <div class="python-metric-pill">
+                <span class="pmp-icon">👶</span>
+                <div class="pmp-content">
+                  <span class="pmp-label">Generational Cohort</span>
+                  <span class="pmp-val" id="py-generation">Baby Boomer (1946 – 1964)</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="python-bio-guidance" id="python-bio-guidance">
+              <div class="pbg-left">
+                <span class="pbg-icon" id="py-stage-icon">🌟</span>
+                <div class="pbg-text">
+                  <span class="pbg-stage" id="py-stage-name">Senior / Golden Years (Age 65+)</span>
+                  <span class="pbg-desc" id="py-recommendation">Priority: DEXA bone scan, cardiac rhythm checks, shingles & pneumococcal vaccination, fall safety.</span>
+                </div>
+              </div>
+              <div class="pbg-right">
+                <span class="pbg-next-bday" id="py-next-bday">🎈 Next Birthday in 242 days (Tuesday)</span>
               </div>
             </div>
           </div>

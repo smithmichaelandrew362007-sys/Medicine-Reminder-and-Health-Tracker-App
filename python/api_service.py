@@ -43,7 +43,27 @@ class CareSyncApiHandler(BaseHTTPRequestHandler):
             self.end_headers()
 
     def do_POST(self):
-        if self.path == "/api/biometrics/calculate":
+        if self.path == "/api/calendar/analyze-dob":
+            content_length = int(self.headers.get("Content-Length", 0))
+            body = self.rfile.read(content_length).decode("utf-8")
+            try:
+                data = json.loads(body) if body else {}
+                birth_date = data.get("birth_date", "1961-06-15")
+                result = HealthMetricsCalculator.analyze_birth_date(birth_date)
+
+                self.send_response(200)
+                self._send_cors_headers()
+                self.send_header("Content-Type", "application/json")
+                self.end_headers()
+                self.wfile.write(json.dumps({"success": True, "data": result}).encode("utf-8"))
+            except Exception as e:
+                self.send_response(400)
+                self._send_cors_headers()
+                self.send_header("Content-Type", "application/json")
+                self.end_headers()
+                self.wfile.write(json.dumps({"success": False, "error": str(e)}).encode("utf-8"))
+
+        elif self.path == "/api/biometrics/calculate":
             content_length = int(self.headers.get("Content-Length", 0))
             body = self.rfile.read(content_length).decode("utf-8")
             
