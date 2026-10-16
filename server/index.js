@@ -9,6 +9,7 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { initDatabase, getDbStatus, getSql } from './db.js';
+import { generateGeminiNutritionPlan, chatWithGeminiNutrition, analyzeMealCalories } from './ai.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -21,7 +22,8 @@ app.use(express.json());
 // In-memory local fallback store (clean slate)
 const localStore = {
   users: [],
-  profiles: {}
+  profiles: {},
+  nutritionPlans: {}
 };
 
 function hashPassword(pwd) {
@@ -67,6 +69,78 @@ app.post('/api/config/neon', async (req, res) => {
     }
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+/**
+ * 1.5 Gemini AI Status & API Key Configuration
+ */
+app.get('/api/config/gemini/status', (req, res) => {
+  const key = process.env.GEMINI_API_KEY;
+  const configured = Boolean(key && key.trim() !== '' && !key.includes('YOUR_'));
+  const preview = configured ? `${key.substring(0, 6)}...${key.substring(key.length - 4)}` : '';
+  res.json({ configured, preview });
+});
+
+app.post('/api/config/gemini', (req, res) => {
+  const { apiKey } = req.body;
+  if (!apiKey || apiKey.trim() === '') {
+    return res.status(400).json({ error: 'Gemini API Key is required' });
+  }
+
+  const cleanKey = apiKey.trim();
+  try {
+    let envContent = '';
+    if (fs.existsSync(envFilePath)) {
+      envContent = fs.readFileSync(envFilePath, 'utf8');
+      if (envContent.includes('GEMINI_API_KEY=')) {
+        envContent = envContent.replace(/GEMINI_API_KEY=.*/g, `GEMINI_API_KEY=${cleanKey}`);
+      } else {
+        envContent += `\nGEMINI_API_KEY=${cleanKey}\n`;
+      }
+    } else {
+      envContent = `GEMINI_API_KEY=${cleanKey}\n`;
+    }
+    fs.writeFileSync(envFilePath, envContent.trim() + '\n', 'utf8');
+    process.env.GEMINI_API_KEY = cleanKey;
+
+    res.json({
+      success: true,
+      message: 'Gemini API Key activated successfully!',
+      preview: `${cleanKey.substring(0, 6)}...${cleanKey.substring(cleanKey.length - 4)}`
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+/**
+ * 1.6 Gemini AI Nutrition & Calorie Calculation Endpoints
+ */
+app.post('/api/ai/nutrition-plan', async (req, res) => {
+  try {
+    const plan = await generateGeminiNutritionPlan(req.body);
+    res.json({ success: true, plan });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.post('/api/ai/chat', async (req, res) => {
+  try {
+    const result = await chatWithGeminiNutrition(req.body);
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.post('/api/ai/analyze-meal', async (req, res) => {
+  try {
+    const result = await analyzeMealCalories(req.body);
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
   }
 });
 

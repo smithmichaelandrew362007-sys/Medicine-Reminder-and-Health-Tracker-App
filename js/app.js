@@ -12,6 +12,7 @@ import { initPrescriptionsView, renderDocuments } from './prescriptions.js';
 import { initPharmacyView, renderInventoryStatus, renderRefillOrders, renderNearbyPharmacies } from './pharmacy.js';
 import { initAIInsightsView, renderAIInsights } from './ai-insights.js';
 import { initAuthAndOnboarding } from './auth.js';
+import { initNutritionView, renderNutritionPlan, openBodyQuestionnaire } from './nutrition.js';
 
 let currentTab = 'schedule';
 
@@ -45,7 +46,16 @@ function initApp() {
   initPrescriptionsView();
   initPharmacyView();
   initAIInsightsView();
+  initNutritionView();
   initAuthAndOnboarding();
+
+  // ── Body Questionnaire: Ask questions about body (height, weight, age) right after login ──
+  const patient = state.patient || {};
+  if (!patient.bodyProfileCompleted) {
+    setTimeout(() => {
+      openBodyQuestionnaire();
+    }, 700);
+  }
 
   // Check if user arrived from registration with onboarding flag
   const urlParams = new URLSearchParams(window.location.search);
@@ -119,6 +129,8 @@ function setupNavigation() {
         renderNearbyPharmacies();
       } else if (targetTab === 'insights') {
         renderAIInsights();
+      } else if (targetTab === 'nutrition') {
+        renderNutritionPlan();
       }
     });
   });

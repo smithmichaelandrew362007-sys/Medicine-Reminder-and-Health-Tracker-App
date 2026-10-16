@@ -10,6 +10,7 @@
   <link rel="stylesheet" href="/css/index.css" />
   <link rel="stylesheet" href="/css/components.css" />
   <link rel="stylesheet" href="/css/views.css" />
+  <link rel="stylesheet" href="/css/nutrition.css" />
 
   <!-- Immediate Auth Guard: Redirect unauthenticated visitors directly to login.html -->
   <script>
@@ -62,6 +63,11 @@
         <!-- Neon PostgreSQL Status -->
         <button class="neon-status-pill" id="neon-status-badge" title="Configure Neon Database">
           <span id="neon-status-text">⚡ Neon DB: Click to Connect</span>
+        </button>
+
+        <!-- Google Gemini AI Status -->
+        <button class="gemini-status-pill" id="gemini-status-badge" title="Configure Google Gemini AI">
+          <span id="gemini-status-text">✨ Gemini AI: Connect Key</span>
         </button>
 
         <!-- User Profile & Sign In -->
@@ -139,6 +145,12 @@
         <button class="nav-item" data-tab="pharmacy">
           <span>📦</span>
           <span>Pharmacy & Refills</span>
+        </button>
+
+        <button class="nav-item" data-tab="nutrition">
+          <span>🥗</span>
+          <span>AI Nutrition & Calories</span>
+          <span class="nav-badge" style="background:linear-gradient(135deg, #6366f1, #a855f7); color:#fff; font-weight:700;">✨ AI</span>
         </button>
 
         <button class="nav-item" data-tab="insights">
@@ -493,6 +505,229 @@
 
           <div style="display:flex; flex-direction:column; gap:16px;" id="ai-insights-cards">
             <!-- Populated dynamically via ai-insights.js -->
+          </div>
+        </section>
+
+        <!-- ==================== VIEW 8: GEMINI AI NUTRITION & CALORIES ==================== -->
+        <section id="view-nutrition" class="view-section hidden">
+          <div class="flex-between" style="margin-bottom: 20px; flex-wrap: wrap; gap: 12px;">
+            <div>
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <h2 style="font-size: 1.5rem; margin: 0;">🥗 Gemini AI Nutrition & Calorie Blueprint</h2>
+                <span class="badge" id="nutri-ai-engine-badge" style="background: linear-gradient(135deg, #6366f1, #a855f7); color:#fff; font-size: 0.75rem; padding: 3px 8px; border-radius: 9999px;">
+                  ✨ Gemini 2.5 Flash
+                </span>
+              </div>
+              <p style="font-size: 0.9rem; color: var(--text-muted); margin-top: 4px;">
+                Clinically grounded caloric targets, tailored macronutrients, drug-nutrient safety checks, and interactive AI nutrition assistance.
+              </p>
+            </div>
+            <div style="display: flex; gap: 8px;">
+              <button class="btn btn-secondary" onclick="window.openBodyQuestionnaire()" title="Edit height, weight, activity or goals">
+                📋 Update Body Biometrics
+              </button>
+            </div>
+          </div>
+
+          <!-- Hero Nutrition & Calorie Card -->
+          <div class="nutrition-hero-card">
+            <!-- Calorie Target -->
+            <div class="calorie-target-display">
+              <div style="font-size: 0.8rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Daily Calorie Target</div>
+              <div class="calorie-big-number" id="nutri-target-calories">1,420</div>
+              <div class="calorie-unit">kcal / day</div>
+
+              <div style="display: flex; justify-content: space-around; margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--border-light); font-size: 0.82rem;">
+                <div>
+                  <div style="color: var(--text-muted);">BMR (Basal)</div>
+                  <strong id="nutri-bmr-val">1,212 kcal</strong>
+                </div>
+                <div>
+                  <div style="color: var(--text-muted);">TDEE (Burn)</div>
+                  <strong id="nutri-tdee-val">1,865 kcal</strong>
+                </div>
+              </div>
+            </div>
+
+            <!-- Macro Bars & Clinical Limits -->
+            <div>
+              <div id="nutri-calorie-reason" style="font-size: 0.95rem; font-weight: 600; color: var(--text-heading); margin-bottom: 14px; line-height: 1.4;">
+                Prescribed with a clinical caloric deficit calibrated for healthy weight management and steady glycemic control.
+              </div>
+
+              <!-- Macros -->
+              <div class="macro-bar-container">
+                <div class="macro-bar-row">
+                  <div style="display:flex; justify-content:space-between; font-size:0.85rem; font-weight:700;">
+                    <span style="color:#ef4444;">🍗 Protein Target</span>
+                    <span id="macro-protein-val">99g (28%)</span>
+                  </div>
+                  <div class="macro-bar-track">
+                    <div class="macro-bar-fill protein" id="macro-protein-bar" style="width: 28%;"></div>
+                  </div>
+                </div>
+
+                <div class="macro-bar-row">
+                  <div style="display:flex; justify-content:space-between; font-size:0.85rem; font-weight:700;">
+                    <span style="color:#f59e0b;">🌾 Complex Carbohydrates</span>
+                    <span id="macro-carbs-val">135g (38%)</span>
+                  </div>
+                  <div class="macro-bar-track">
+                    <div class="macro-bar-fill carbs" id="macro-carbs-bar" style="width: 38%;"></div>
+                  </div>
+                </div>
+
+                <div class="macro-bar-row">
+                  <div style="display:flex; justify-content:space-between; font-size:0.85rem; font-weight:700;">
+                    <span style="color:#10b981;">🥑 Healthy Fats</span>
+                    <span id="macro-fats-val">54g (34%)</span>
+                  </div>
+                  <div class="macro-bar-track">
+                    <div class="macro-bar-fill fats" id="macro-fats-bar" style="width: 34%;"></div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Clinical Limits -->
+              <div class="clinical-limits-grid">
+                <div class="limit-card">
+                  <div class="limit-val" id="limit-sodium-val">&lt; 1,800 mg</div>
+                  <div class="limit-label">Sodium Limit</div>
+                </div>
+                <div class="limit-card">
+                  <div class="limit-val" id="limit-sugar-val">&lt; 20 g</div>
+                  <div class="limit-label">Added Sugars</div>
+                </div>
+                <div class="limit-card">
+                  <div class="limit-val" id="limit-fiber-val">≥ 30 g</div>
+                  <div class="limit-label">Dietary Fiber</div>
+                </div>
+                <div class="limit-card">
+                  <div class="limit-val" id="limit-water-val">2.5 L/day</div>
+                  <div class="limit-label">Daily Hydration</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Two-column Grid for Nutrition Details and AI Tools -->
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(360px, 1fr)); gap: 20px;">
+            <!-- Left Column: Guidelines, Drug Safety, Meal Plan -->
+            <div style="display: flex; flex-direction: column; gap: 16px;">
+              <!-- Drug-Nutrient Safety Warnings -->
+              <div class="card" style="padding: 20px;">
+                <div style="display:flex; align-items:center; gap:8px; margin-bottom:12px;">
+                  <span style="font-size:1.3rem;">🛡️</span>
+                  <h3 style="font-size: 1.15rem; margin:0;">Medication & Diet Safety Warnings</h3>
+                </div>
+                <div id="nutri-medication-precautions">
+                  <!-- Populated dynamically via nutrition.js -->
+                </div>
+              </div>
+
+              <!-- Condition Guidelines -->
+              <div class="card" style="padding: 20px;">
+                <div style="display:flex; align-items:center; gap:8px; margin-bottom:12px;">
+                  <span style="font-size:1.3rem;">📋</span>
+                  <h3 style="font-size: 1.15rem; margin:0;">Clinical Dietary Guidelines</h3>
+                </div>
+                <div id="nutri-condition-guidelines">
+                  <!-- Populated dynamically via nutrition.js -->
+                </div>
+              </div>
+
+              <!-- 1-Day Sample Meal Plan -->
+              <div class="card" style="padding: 20px;">
+                <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:12px;">
+                  <div style="display:flex; align-items:center; gap:8px;">
+                    <span style="font-size:1.3rem;">🍽️</span>
+                    <h3 style="font-size: 1.15rem; margin:0;">Personalized Daily Meal Plan</h3>
+                  </div>
+                  <span style="font-size:0.8rem; color:var(--text-muted);">Calibrated to your target calories</span>
+                </div>
+                <div class="meal-plan-grid" id="nutri-meal-plan-grid">
+                  <!-- Populated dynamically via nutrition.js -->
+                </div>
+              </div>
+            </div>
+
+            <!-- Right Column: Interactive Gemini Tools (Meal Analyzer & Live Chat) -->
+            <div style="display: flex; flex-direction: column; gap: 16px;">
+              <!-- Quick Meal & Calorie Analyzer -->
+              <div class="card" style="padding: 20px;">
+                <div style="display:flex; align-items:center; gap:8px; margin-bottom:6px;">
+                  <span style="font-size:1.3rem;">🔍</span>
+                  <h3 style="font-size: 1.15rem; margin:0;">Gemini Meal Calorie & Safety Analyzer</h3>
+                </div>
+                <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:14px;">
+                  Type what you ate or plan to eat. Gemini AI estimates calories, macros, and verifies medication safety.
+                </p>
+
+                <form id="meal-analyzer-form">
+                  <div class="form-group" style="margin-bottom:10px;">
+                    <input
+                      type="text"
+                      id="meal-analyzer-input"
+                      class="form-input"
+                      placeholder="e.g. Grilled salmon, baked sweet potato, steamed broccoli with olive oil"
+                      required
+                    />
+                  </div>
+                  <button type="submit" class="btn btn-primary" id="meal-analyzer-btn" style="width: 100%;">
+                    Calculate & Check Safety
+                  </button>
+                </form>
+
+                <div id="meal-analyzer-result">
+                  <!-- Result will appear here -->
+                </div>
+              </div>
+
+              <!-- Interactive Gemini AI Health & Nutrition Assistant -->
+              <div class="gemini-chat-card">
+                <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:10px; padding-bottom:8px; border-bottom:1px solid var(--border-light);">
+                  <div style="display:flex; align-items:center; gap:8px;">
+                    <span style="font-size:1.4rem;">🤖</span>
+                    <div>
+                      <div style="font-weight:700; font-size:1rem;">Gemini Clinical Nutrition Assistant</div>
+                      <div style="font-size:0.75rem; color:var(--text-muted);">Trained with your active meds & biometrics</div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Suggested Prompts -->
+                <div class="chat-prompt-pill-row">
+                  <button type="button" class="ai-chat-prompt-pill">"Can I eat bananas with my BP medicine?"</button>
+                  <button type="button" class="ai-chat-prompt-pill">"What's a high-protein diabetic breakfast?"</button>
+                  <button type="button" class="ai-chat-prompt-pill">"How to reduce sodium without losing flavor?"</button>
+                </div>
+
+                <!-- Messages Box -->
+                <div class="gemini-chat-messages" id="gemini-chat-messages">
+                  <div class="chat-bubble chat-bubble--ai">
+                    <div class="chat-bubble-avatar">✨</div>
+                    <div class="chat-bubble-content">
+                      Hello! I'm your <strong>CareSync Gemini AI Nutrition Specialist</strong>. I have reviewed your body biometrics, caloric targets, and active medications. Ask me any questions about meals, calorie counts, or food-drug interactions!
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Input Form -->
+                <form id="gemini-chat-form" style="display:flex; gap:8px; margin-top:10px;">
+                  <input
+                    type="text"
+                    id="gemini-chat-input"
+                    class="form-input"
+                    placeholder="Ask Gemini anything about your diet or food safety..."
+                    autocomplete="off"
+                    required
+                  />
+                  <button type="submit" class="btn btn-primary" style="padding:0 16px;">
+                    Send
+                  </button>
+                </form>
+              </div>
+            </div>
           </div>
         </section>
       </main>
@@ -1130,6 +1365,304 @@
         <button type="button" class="btn btn-secondary hidden" id="ob-btn-prev">← Previous</button>
         <button type="button" class="btn btn-primary" id="ob-btn-next">Next Step →</button>
       </div>
+    </div>
+  </div>
+
+  <!-- 11. Body Profile & Gemini Nutrition Questionnaire Modal -->
+  <div class="modal-overlay" id="body-questionnaire-modal">
+    <div class="modal-container" style="max-width: 660px;">
+      <div class="modal-header">
+        <div>
+          <div style="display:flex; align-items:center; gap:8px;">
+            <h3 class="modal-title" style="margin:0;">📋 Personalize Your Health & Nutrition</h3>
+            <span style="font-size:0.75rem; background:linear-gradient(135deg, #6366f1, #a855f7); color:#fff; padding:2px 8px; border-radius:9999px; font-weight:700;">
+              ✨ Gemini AI Powered
+            </span>
+          </div>
+          <div style="font-size: 0.82rem; color: var(--text-muted); margin-top:3px;">
+            Help CareSync tailor your medication schedules, caloric needs, and dietary safety.
+          </div>
+        </div>
+        <div style="display:flex; align-items:center; gap:8px;">
+          <span id="bq-step-indicator" style="font-size: 0.8rem; font-weight: 700; background: var(--bg-subtle); padding: 4px 10px; border-radius: var(--radius-pill);">Step 1 of 4</span>
+          <button class="btn btn-sm btn-ghost modal-close">✕</button>
+        </div>
+      </div>
+
+      <div class="modal-body" style="max-height: 72vh; overflow-y: auto;">
+        <!-- Progress Bar -->
+        <div class="onboarding-progress-bar-wrap" style="margin-bottom:16px;">
+          <div class="onboarding-progress-bar" id="bq-progress-bar" style="width: 25%;"></div>
+        </div>
+
+        <!-- Step 1: Body Biometrics -->
+        <div class="bq-step-section" id="bq-step-1">
+          <h4 style="font-size: 1.05rem; margin-bottom: 12px; color: var(--primary-700);">
+            Step 1: Your Body Biometrics
+          </h4>
+
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label class="form-label">Full Name *</label>
+              <input type="text" id="bq-name-input" class="form-input" placeholder="e.g. Eleanor Vance" required />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Age (years) *</label>
+              <input type="number" id="bq-age-input" class="form-input" value="65" min="1" max="120" required />
+            </div>
+          </div>
+
+          <div class="form-grid-3" style="margin-top: 12px;">
+            <div class="form-group">
+              <label class="form-label">Biological Sex *</label>
+              <select id="bq-gender-select" class="form-select">
+                <option value="Female">Female</option>
+                <option value="Male">Male</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Height (cm) *</label>
+              <input type="number" id="bq-height-input" class="form-input" value="165" min="50" max="250" required />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Current Weight (kg) *</label>
+              <input type="number" id="bq-weight-input" class="form-input" value="68" step="0.1" min="20" max="350" required />
+            </div>
+          </div>
+
+          <div class="form-grid-2" style="margin-top: 12px;">
+            <div class="form-group">
+              <label class="form-label">Target Weight Goal (kg)</label>
+              <input type="number" id="bq-target-weight-input" class="form-input" value="65" step="0.1" placeholder="e.g. 65" />
+            </div>
+            <div style="display:flex; flex-direction:column; justify-content:center;">
+              <label class="form-label">Body Mass Index (BMI)</label>
+              <div id="bq-bmi-display" class="vital-status-chip normal" style="align-self:flex-start; margin-top:4px;">
+                ● BMI: <strong>25.0</strong> (Normal Weight)
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 2: Activity Level & Health Goals -->
+        <div class="bq-step-section hidden" id="bq-step-2">
+          <h4 style="font-size: 1.05rem; margin-bottom: 6px; color: var(--primary-700);">
+            Step 2: Activity Level & Nutrition Goals
+          </h4>
+          <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 12px;">
+            Used by Gemini AI to compute your Basal Metabolic Rate (BMR) and Total Daily Energy Expenditure (TDEE).
+          </p>
+
+          <label class="form-label">Daily Physical Activity Level</label>
+          <div class="activity-card-grid">
+            <div class="activity-card selected">
+              <input type="radio" name="bq-activity" value="sedentary" style="display:none;" />
+              <div class="card-icon">🛋️</div>
+              <div class="card-title">Sedentary</div>
+              <div class="card-desc">Desk work, minimal daily exercise (1.2x BMR)</div>
+            </div>
+            <div class="activity-card">
+              <input type="radio" name="bq-activity" value="light" checked style="display:none;" />
+              <div class="card-icon">🚶</div>
+              <div class="card-title">Lightly Active</div>
+              <div class="card-desc">Light walking/exercise 1-3 days/wk (1.375x BMR)</div>
+            </div>
+            <div class="activity-card">
+              <input type="radio" name="bq-activity" value="moderate" style="display:none;" />
+              <div class="card-icon">🏃</div>
+              <div class="card-title">Moderately Active</div>
+              <div class="card-desc">Moderate workout 3-5 days/wk (1.55x BMR)</div>
+            </div>
+            <div class="activity-card">
+              <input type="radio" name="bq-activity" value="active" style="display:none;" />
+              <div class="card-icon">🏋️</div>
+              <div class="card-title">Very Active</div>
+              <div class="card-desc">Heavy training 6-7 days/wk (1.725x BMR)</div>
+            </div>
+          </div>
+
+          <label class="form-label" style="margin-top: 14px;">Primary Health & Calorie Goal</label>
+          <div class="goal-card-grid">
+            <div class="goal-card selected">
+              <input type="radio" name="bq-goal" value="maintenance" checked style="display:none;" />
+              <div class="card-icon">⚖️</div>
+              <div class="card-title">Maintain Weight</div>
+              <div class="card-desc">Caloric balance for steady energy & health</div>
+            </div>
+            <div class="goal-card">
+              <input type="radio" name="bq-goal" value="weight_loss" style="display:none;" />
+              <div class="card-icon">📉</div>
+              <div class="card-title">Healthy Weight Loss</div>
+              <div class="card-desc">Moderate safe 450 kcal deficit for fat reduction</div>
+            </div>
+            <div class="goal-card">
+              <input type="radio" name="bq-goal" value="diabetic_control" style="display:none;" />
+              <div class="card-icon">🩸</div>
+              <div class="card-title">Blood Sugar Control</div>
+              <div class="card-desc">Low glycemic index carbs & diabetic protocol</div>
+            </div>
+            <div class="goal-card">
+              <input type="radio" name="bq-goal" value="heart_health" style="display:none;" />
+              <div class="card-icon">❤️</div>
+              <div class="card-title">Heart Health / Low Sodium</div>
+              <div class="card-desc">DASH protocol for optimal blood pressure</div>
+            </div>
+          </div>
+
+          <div class="form-group" style="margin-top: 14px;">
+            <label class="form-label">Dietary Preference</label>
+            <select id="bq-diet-select" class="form-select">
+              <option value="standard">Standard / Omnivore (Balanced)</option>
+              <option value="vegetarian">Vegetarian (Plant-based + Dairy/Eggs)</option>
+              <option value="vegan">Vegan (100% Plant-based)</option>
+              <option value="mediterranean">Mediterranean Diet</option>
+              <option value="low_carb">Low-Carb / Glycemic Control</option>
+              <option value="dash">DASH Diet (Dietary Approaches to Stop Hypertension)</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Step 3: Medical Conditions & Allergies -->
+        <div class="bq-step-section hidden" id="bq-step-3">
+          <h4 style="font-size: 1.05rem; margin-bottom: 6px; color: var(--primary-700);">
+            Step 3: Medical Conditions & Food Allergies
+          </h4>
+          <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 12px;">
+            Gemini AI cross-checks your conditions and active medications to prevent hazardous drug-nutrient interactions.
+          </p>
+
+          <label class="form-label">Diagnosed Conditions</label>
+          <div class="ob-chip-grid">
+            <button type="button" class="ob-condition-chip bq-condition-chip" data-condition="Type 2 Diabetes">🩸 Type 2 Diabetes</button>
+            <button type="button" class="ob-condition-chip bq-condition-chip" data-condition="Hypertension">❤️ Hypertension (High BP)</button>
+            <button type="button" class="ob-condition-chip bq-condition-chip" data-condition="High Cholesterol">🧠 High Cholesterol</button>
+            <button type="button" class="ob-condition-chip bq-condition-chip" data-condition="Heart Disease">🫀 Heart Disease</button>
+            <button type="button" class="ob-condition-chip bq-condition-chip" data-condition="Asthma">🫁 Asthma</button>
+            <button type="button" class="ob-condition-chip bq-condition-chip" data-condition="Osteoarthritis">🦴 Osteoarthritis</button>
+          </div>
+          <div class="form-group" style="margin-top: 8px;">
+            <input type="text" id="bq-custom-condition" class="form-input" placeholder="Other condition (optional)..." />
+          </div>
+
+          <label class="form-label" style="margin-top: 14px;">Food Allergies & Intolerances</label>
+          <div class="ob-chip-grid">
+            <button type="button" class="ob-allergy-chip bq-allergy-chip" data-allergy="Peanuts / Tree Nuts">🥜 Peanuts / Nuts</button>
+            <button type="button" class="ob-allergy-chip bq-allergy-chip" data-allergy="Dairy / Lactose">🥛 Dairy / Lactose</button>
+            <button type="button" class="ob-allergy-chip bq-allergy-chip" data-allergy="Gluten / Wheat">🌾 Gluten</button>
+            <button type="button" class="ob-allergy-chip bq-allergy-chip" data-allergy="Shellfish">🦐 Shellfish</button>
+            <button type="button" class="ob-allergy-chip bq-allergy-chip" data-allergy="Eggs">🥚 Eggs</button>
+            <button type="button" class="ob-allergy-chip bq-allergy-chip" data-allergy="Soy">🌱 Soy</button>
+          </div>
+          <div class="form-group" style="margin-top: 8px;">
+            <input type="text" id="bq-custom-allergy" class="form-input" placeholder="Other food allergy (optional)..." />
+          </div>
+        </div>
+
+        <!-- Step 4: AI Computation & Results Preview -->
+        <div class="bq-step-section hidden" id="bq-step-4">
+          <!-- Loading State -->
+          <div id="bq-ai-loading" style="text-align:center; padding:36px 16px;">
+            <div style="font-size:2.8rem; margin-bottom:12px; animation: pulse 1.5s infinite;">✨</div>
+            <h4 style="font-size:1.25rem; margin-bottom:8px;">Gemini AI is analyzing your body biometrics...</h4>
+            <p style="font-size:0.88rem; color:var(--text-muted); max-width:440px; margin:0 auto;">
+              Calculating basal metabolic rate, evaluating total energy expenditure, and checking drug-nutrient safety for your active medications.
+            </p>
+          </div>
+
+          <!-- Results State -->
+          <div id="bq-ai-results" class="hidden">
+            <div style="text-align:center; margin-bottom:20px;">
+              <span style="font-size:0.8rem; font-weight:700; color:var(--primary-600); text-transform:uppercase;" id="bq-result-source">
+                ✨ Powered by Live Google Gemini AI
+              </span>
+              <div style="font-size:2.6rem; font-weight:900; color:var(--primary-700); margin-top:4px;" id="bq-result-calories">
+                1,420
+              </div>
+              <div style="font-size:0.9rem; font-weight:700; color:var(--text-muted);">Recommended Daily Calories (kcal)</div>
+              <p style="font-size:0.88rem; color:var(--text-heading); max-width:480px; margin:8px auto 0 auto;" id="bq-result-reason">
+                Prescribed with a clinical caloric deficit calibrated for healthy weight management.
+              </p>
+            </div>
+
+            <div style="display:flex; justify-content:space-around; background:var(--bg-subtle); padding:14px; border-radius:var(--radius-lg); margin-bottom:16px; font-size:0.88rem;">
+              <div>
+                <span style="color:var(--text-muted);">BMR (Basal):</span>
+                <strong id="bq-result-bmr">1,212 kcal</strong>
+              </div>
+              <div>
+                <span style="color:var(--text-muted);">TDEE (Daily Burn):</span>
+                <strong id="bq-result-tdee">1,865 kcal</strong>
+              </div>
+            </div>
+
+            <div id="bq-result-macros" style="display:flex; gap:8px; justify-content:center; flex-wrap:wrap; margin-bottom:14px;">
+              <!-- Populated dynamically -->
+            </div>
+
+            <div style="padding:12px; background:rgba(16, 185, 129, 0.1); border-radius:var(--radius-md); font-size:0.84rem; color:var(--success-700); text-align:center;">
+              ✓ Your full nutrition blueprint, tailored meal plan, and drug safety guide are ready to explore!
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary hidden" id="bq-btn-prev">← Previous</button>
+        <button type="button" class="btn btn-primary" id="bq-btn-next">Next Step →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 12. Google Gemini API Key Configuration Modal -->
+  <div class="modal-overlay" id="gemini-key-modal">
+    <div class="modal-container" style="max-width: 500px;">
+      <div class="modal-header">
+        <div style="display:flex; align-items:center; gap:8px;">
+          <span style="font-size:1.4rem;">✨</span>
+          <h3 class="modal-title" style="margin:0;">Connect Google Gemini AI</h3>
+        </div>
+        <button class="btn btn-sm btn-ghost modal-close">✕</button>
+      </div>
+      <form id="gemini-key-form">
+        <div class="modal-body" style="padding-bottom:16px;">
+          <p style="font-size:0.88rem; color:var(--text-muted); line-height:1.4; margin-bottom:16px;">
+            CareSync uses <strong>Google Gemini AI</strong> for personalized calorie and macronutrient calculations, medication food safety checks, and interactive nutrition advice.
+          </p>
+
+          <div class="form-group">
+            <label class="form-label" for="gemini-key-input">Gemini API Key</label>
+            <div style="position:relative;">
+              <input
+                type="password"
+                id="gemini-key-input"
+                class="form-input"
+                placeholder="AIzaSy..."
+                style="padding-right: 42px;"
+                required
+              />
+              <button
+                type="button"
+                id="gemini-key-toggle"
+                style="position:absolute; right:10px; top:50%; transform:translateY(-50%); background:none; border:none; cursor:pointer; font-size:1rem;"
+                title="Toggle visibility"
+              >
+                👁️
+              </button>
+            </div>
+          </div>
+
+          <div style="background:var(--bg-subtle); padding:12px; border-radius:var(--radius-md); font-size:0.82rem; color:var(--text-muted); margin-top:14px; line-height:1.4;">
+            💡 <strong>How to get a key:</strong> You can create a free API key at
+            <a href="https://aistudio.google.com/app/apikey" target="_blank" style="color:var(--primary-600); font-weight:700;">Google AI Studio ↗</a>.
+            Your key is saved locally in your project's <code>.env</code> file.
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary modal-close">Cancel</button>
+          <button type="submit" class="btn btn-primary">Activate Gemini AI</button>
+        </div>
+      </form>
     </div>
   </div>
 
