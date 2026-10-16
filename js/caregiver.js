@@ -14,8 +14,8 @@ export function initCaregiverView() {
 
 export function renderCaregiverHeader() {
   const state = store.getState();
-  const patient = state.patient;
-  const caregiver = state.caregiver;
+  const patient = state.patient || {};
+  const caregiver = state.caregiver || { name: 'Sarah Vance', role: 'Primary Caregiver', phone: '+1 (555) 382-9910' };
 
   const headerEl = document.getElementById('caregiver-patient-summary');
   if (!headerEl) return;
@@ -28,20 +28,20 @@ export function renderCaregiverHeader() {
   headerEl.innerHTML = `
     <div class="patient-profile-snippet">
       <div class="patient-avatar">
-        ${patient.avatarInitials}
+        ${patient.avatarInitials || '👤'}
       </div>
       <div>
         <div style="display:flex; align-items:center; gap:8px;">
-          <h3 style="font-size:1.35rem;">${patient.name}</h3>
+          <h3 style="font-size:1.35rem;">${patient.name || 'Patient'}</h3>
           <span style="font-size:0.8rem; background:var(--primary-50); color:var(--primary-700); padding:2px 8px; border-radius:var(--radius-pill); font-weight:700;">
-            Age ${patient.age} • ${patient.gender}
+            Age ${patient.age || '--'} • ${patient.gender || 'Unspecified'}
           </span>
         </div>
         <div style="font-size:0.85rem; color:var(--text-muted); margin-top:2px;">
-          Conditions: <strong>${patient.conditions.join(', ')}</strong> | Allergies: <strong class="text-danger">${patient.allergies.join(', ')}</strong>
+          Conditions: <strong>${(patient.conditions || []).join(', ') || 'None logged'}</strong> | Allergies: <strong class="text-danger">${(patient.allergies || []).join(', ') || 'None'}</strong>
         </div>
         <div style="font-size:0.82rem; color:var(--text-muted); margin-top:4px;">
-          Caregiver: <strong>${caregiver.name}</strong> (${caregiver.role}) • Linked Phone: <strong>${caregiver.phone}</strong>
+          Caregiver: <strong>${caregiver.name || 'Caregiver'}</strong> (${caregiver.role || 'Family'}) • Linked Phone: <strong>${caregiver.phone || 'Not set'}</strong>
         </div>
       </div>
     </div>
