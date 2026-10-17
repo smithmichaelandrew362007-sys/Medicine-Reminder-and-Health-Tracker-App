@@ -1,0 +1,33 @@
+                            6. BIBLIOGRAPHY
+
+A. BOOKS & TEXTBOOKS:
+1. Flanagan, David. (2020). "JavaScript: The Definitive Guide (7th Edition)."
+   O'Reilly Media, Sebastopol, CA.
+2. Duckett, Jon. (2014). "HTML & CSS: Design and Build Websites."
+   John Wiley & Sons, Indianapolis, IN.
+3. Brown, Ethan. (2019). "Web Development with Node and Express (2nd Edition)."
+   O'Reilly Media, Sebastopol, CA.
+
+B. CLINICAL & ACADEMIC RESEARCH PAPERS:
+4. Sabaté, Eduardo. (2003). "Adherence to Long-Term Therapies: Evidence for Action."
+   World Health Organization (WHO), Geneva, Switzerland.
+5. Jimmy, Beena & Jose, Jimmy. (2011). "Patient Medication Adherence: Measures
+   in Daily Practice." Oman Medical Journal, 26(3), pp. 155–159.
+6. Whelton, Paul K., et al. (2018). "2017 ACC/AHA Clinical Practice Guideline on
+   High Blood Pressure in Adults." Journal of the American College of Cardiology.
+
+C. OFFICIAL TECHNICAL DOCUMENTATION & SPECIFICATIONS:
+7. Node.js Foundation. (2024). "Node.js Documentation & Runtime API Reference."
+   https://nodejs.org/docs/latest/api/
+8. Express.js Project. (2024). "Express 5.x Fast, Unopinionated Web Framework."
+   https://expressjs.com/
+9. Neon Database Inc. (2024). "Neon Serverless Postgres Architecture & Pooling."
+   https://neon.tech/docs/introduction
+10. Electron Open Source Project. (2024). "Electron Framework Documentation."
+    https://www.electronjs.org/docs/latest/
+11. Google DeepMind. (2024). "Gemini AI API & Generative AI Developer Docs."
+    https://ai.google.dev/docs
+12. Mozilla Developer Network (MDN). (2024). "Web Audio API Specification."
+    https://developer.mozilla.org/en-US/docs/Web/API/Web_Audio_API
+13. Chart.js Community. (2024). "Chart.js: Flexible Open Source JavaScript Charts."
+    https://www.chartjs.org/docs/latest/
