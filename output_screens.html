@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CareSync — Output Design & Screens Gallery</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0b1120;
+      --card-bg: #131c31;
+      --border: #233354;
+      --text-main: #f1f5f9;
+      --text-muted: #94a3b8;
+      --accent-teal: #14b8a6;
+      --accent-blue: #38bdf8;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background-color: var(--bg);
+      color: var(--text-main);
+      padding: 40px 20px;
+      line-height: 1.6;
+    }
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+    header {
+      text-align: center;
+      margin-bottom: 40px;
+      padding-bottom: 24px;
+      border-bottom: 1px solid var(--border);
+    }
+    h1 {
+      font-size: 2.2rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, #38bdf8, #14b8a6);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 10px;
+    }
+    p.lead {
+      color: var(--text-muted);
+      font-size: 1.05rem;
+    }
+    .screen-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 24px;
+      margin-bottom: 36px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+    }
+    .screen-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+    .screen-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #fff;
+    }
+    .badge {
+      font-size: 0.78rem;
+      font-weight: 700;
+      background: rgba(20, 184, 166, 0.15);
+      color: var(--accent-teal);
+      border: 1px solid rgba(20, 184, 166, 0.3);
+      padding: 4px 12px;
+      border-radius: 20px;
+    }
+    .img-wrapper {
+      width: 100%;
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      background: #000;
+      margin-bottom: 16px;
+    }
+    .img-wrapper img {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+    .screen-desc {
+      color: var(--text-muted);
+      font-size: 0.92rem;
+    }
+    .screen-desc ul {
+      margin: 8px 0 0 20px;
+    }
+    .screen-desc li {
+      margin-bottom: 4px;
+    }
+    .screen-desc strong {
+      color: var(--text-main);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>CareSync — Output Design & Screens Gallery</h1>
+      <p class="lead">Visual reports, real-time dashboards, charts, and caregiver telemetry outputs.</p>
+    </header>
+
+    <!-- Screen 1 -->
+    <div class="screen-card">
+      <div class="screen-header">
+        <h2 class="screen-title">1. Patient Main Dashboard & Daily Medication Schedule</h2>
+        <span class="badge">Patient Home</span>
+      </div>
+      <div class="img-wrapper">
+        <img src="./images/outputs/output_01_patient_dashboard.png" alt="Patient Main Dashboard">
+      </div>
+      <div class="screen-desc">
+        <p><strong>Outputs Displayed:</strong> Daily adherence progress ring, adherence streak counter, morning/afternoon/evening schedule cards, dose status flags (Taken, Due, Missed), and meal instructions.</p>
+      </div>
+    </div>
+
+    <!-- Screen 2 -->
+    <div class="screen-card">
+      <div class="screen-header">
+        <h2 class="screen-title">2. Caregiver Remote Monitoring Portal & Alert Feed</h2>
+        <span class="badge">Caregiver Telemetry</span>
+      </div>
+      <div class="img-wrapper">
+        <img src="./images/outputs/output_02_caregiver_portal.png" alt="Caregiver Remote Portal">
+      </div>
+      <div class="screen-desc">
+        <p><strong>Outputs Displayed:</strong> Real-time verified patient adherence percentage, active alert feed (missed doses, elevated vitals), emergency SOS triggers, and quick call/SMS shortcuts.</p>
+      </div>
+    </div>
+
+    <!-- Screen 3 -->
+    <div class="screen-card">
+      <div class="screen-header">
+        <h2 class="screen-title">3. Clinical Health Vitals Telemetry Dashboard</h2>
+        <span class="badge">Vitals Telemetry</span>
+      </div>
+      <div class="img-wrapper">
+        <img src="./images/outputs/output_03_vitals_telemetry_analytics.png" alt="Health Vitals Dashboard">
+      </div>
+      <div class="screen-desc">
+        <p><strong>Outputs Displayed:</strong> Blood Pressure with AHA stages, Blood Sugar with fasting ranges, Weight & BMI calculation chip, Body Temperature, and patient comfort slider status.</p>
+      </div>
+    </div>
+
+    <!-- Screen 4 -->
+    <div class="screen-card">
+      <div class="screen-header">
+        <h2 class="screen-title">4. Interactive Blood Glucose Trends Chart</h2>
+        <span class="badge">Visual Analytics</span>
+      </div>
+      <div class="img-wrapper">
+        <img src="./images/outputs/output_04_blood_glucose_trends_chart.png" alt="Blood Glucose Trends Chart">
+      </div>
+      <div class="screen-desc">
+        <p><strong>Outputs Displayed:</strong> Dynamic Chart.js time-series curve showing fasting vs postprandial glucose values, safe target band shading, and interactive hover inspection tooltips.</p>
+      </div>
+    </div>
+
+    <!-- Screen 5 -->
+    <div class="screen-card">
+      <div class="screen-header">
+        <h2 class="screen-title">5. Gemini AI Personalized Nutrition Blueprint</h2>
+        <span class="badge">AI Intelligence</span>
+      </div>
+      <div class="img-wrapper">
+        <img src="./images/outputs/output_05_gemini_ai_nutrition_plan.png" alt="Gemini AI Nutrition Plan">
+      </div>
+      <div class="screen-desc">
+        <p><strong>Outputs Displayed:</strong> Scientifically calibrated daily caloric target (TDEE), custom macronutrient ratios (Carbs/Protein/Fat), meal plans, and disease-specific dietary precautions.</p>
+      </div>
+    </div>
+
+    <!-- Screen 6 -->
+    <div class="screen-card">
+      <div class="screen-header">
+        <h2 class="screen-title">6. Pharmacy Inventory & Refill Fuel Gauges</h2>
+        <span class="badge">Inventory Tracking</span>
+      </div>
+      <div class="img-wrapper">
+        <img src="./images/outputs/output_06_pharmacy_refill_gauges.png" alt="Pharmacy Refill Fuel Gauges">
+      </div>
+      <div class="screen-desc">
+        <p><strong>Outputs Displayed:</strong> Pill inventory fuel gauges with days remaining, low-stock alerts (&lt; 7 days), 1-click refill ordering simulator, and order tracking status stepper.</p>
+      </div>
+    </div>
+
+    <!-- Screen 7 -->
+    <div class="screen-card">
+      <div class="screen-header">
+        <h2 class="screen-title">7. Digital Health Vault Document Archive</h2>
+        <span class="badge">Medical Vault</span>
+      </div>
+      <div class="img-wrapper">
+        <img src="./images/outputs/output_07_digital_health_vault.png" alt="Digital Health Vault">
+      </div>
+      <div class="screen-desc">
+        <p><strong>Outputs Displayed:</strong> Document cards for digitized prescriptions, blood test panels, and imaging reports with category tags, doctor credentials, and upload timestamps.</p>
+      </div>
+    </div>
+
+    <!-- Screen 8 -->
+    <div class="screen-card">
+      <div class="screen-header">
+        <h2 class="screen-title">8. Fullscreen Document Inspection Preview Modal</h2>
+        <span class="badge">Document Inspection</span>
+      </div>
+      <div class="img-wrapper">
+        <img src="./images/outputs/output_08_document_inspection_preview.png" alt="Document Preview Modal">
+      </div>
+      <div class="screen-desc">
+        <p><strong>Outputs Displayed:</strong> Fullscreen high-resolution prescription inspection viewer with doctor notes, diagnostic annotations, and download action controls.</p>
+      </div>
+    </div>
+
+    <!-- Screen 9 -->
+    <div class="screen-card">
+      <div class="screen-header">
+        <h2 class="screen-title">9. Doctor Appointments & Specialist Consultation Schedule</h2>
+        <span class="badge">Clinical Calendar</span>
+      </div>
+      <div class="img-wrapper">
+        <img src="./images/outputs/output_09_doctor_appointments_schedule.png" alt="Doctor Appointments Schedule">
+      </div>
+      <div class="screen-desc">
+        <p><strong>Outputs Displayed:</strong> Specialist appointment cards (Cardiologist, Endocrinologist) with countdown badges, clinic locations, and pre-consultation fasting instructions.</p>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
