@@ -1,0 +1,24 @@
+                              2. SYSTEM STUDY
+
+The Medicine Reminder and Health Tracker - CareSync system operates by dividing
+operational responsibilities across three core entities: the Patient, the Caregiver,
+and the Automated System Engine. Below is the operational study of each entity:
+
+1. Patient Duties (Primary User Role)
+- Schedule & Adherence: Viewing daily pill schedules and marking doses as Taken, Snoozed, or Skipped.
+- Vital Signs Logging: Recording daily Blood Pressure, Blood Sugar, Weight, Temperature, and symptoms.
+- Health Vault & Appointments: Uploading prescription documents and tracking doctor visits.
+- AI Wellness Engagement: Interacting with Gemini AI for customized nutrition and meal calorie analysis.
+
+2. Caregiver Duties (Guardian / Monitor Role)
+- Remote Monitoring: Reviewing real-time adherence rates, recent vitals, and chronic condition profiles.
+- Critical Safety Alerts: Receiving immediate escalation warnings for missed doses and abnormal vitals.
+- Emergency Action: Triggering urgent SOS alarm chimes, simulated direct calls, and reminder SMS.
+- Pharmacy Oversight: Monitoring medication fuel-gauge stocks and coordinating prescription refills.
+
+3. Automated System Duties (CareSync Core Engine)
+- Melodic Alarm Dispatch: Triggering synthesized Web Audio chimes and browser notifications on schedule.
+- Clinical Analytics & Telemetry: Classifying vitals (AHA BP stages, diabetic ranges) with Chart.js trends.
+- Python Bio-Chronology Engine: Computing exact life spans, zodiac insights, and age screening rules.
+- Data Integrity & Synchronization: Syncing state across Web and Electron via Neon Cloud PostgreSQL.
+- Offline Resilience & Security: Handling local storage fallbacks, password hashing, and session authentication.
