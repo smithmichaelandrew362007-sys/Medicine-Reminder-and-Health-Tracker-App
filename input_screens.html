@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CareSync — Input Design & Screens Gallery</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0b1120;
+      --card-bg: #131c31;
+      --border: #233354;
+      --text-main: #f1f5f9;
+      --text-muted: #94a3b8;
+      --accent-teal: #14b8a6;
+      --accent-blue: #38bdf8;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background-color: var(--bg);
+      color: var(--text-main);
+      padding: 40px 20px;
+      line-height: 1.6;
+    }
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+    header {
+      text-align: center;
+      margin-bottom: 40px;
+      padding-bottom: 24px;
+      border-bottom: 1px solid var(--border);
+    }
+    h1 {
+      font-size: 2.2rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, #38bdf8, #14b8a6);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 10px;
+    }
+    p.lead {
+      color: var(--text-muted);
+      font-size: 1.05rem;
+    }
+    .screen-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 24px;
+      margin-bottom: 36px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+    }
+    .screen-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+    .screen-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #fff;
+    }
+    .badge {
+      font-size: 0.78rem;
+      font-weight: 700;
+      background: rgba(20, 184, 166, 0.15);
+      color: var(--accent-teal);
+      border: 1px solid rgba(20, 184, 166, 0.3);
+      padding: 4px 12px;
+      border-radius: 20px;
+    }
+    .img-wrapper {
+      width: 100%;
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      background: #000;
+      margin-bottom: 16px;
+    }
+    .img-wrapper img {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+    .screen-desc {
+      color: var(--text-muted);
+      font-size: 0.92rem;
+    }
+    .screen-desc ul {
+      margin: 8px 0 0 20px;
+    }
+    .screen-desc li {
+      margin-bottom: 4px;
+    }
+    .screen-desc strong {
+      color: var(--text-main);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>CareSync — Input Design & Screens Gallery</h1>
+      <p class="lead">Documenting user input forms, modal dialogs, and interactive controls.</p>
+    </header>
+
+    <!-- Screen 1 -->
+    <div class="screen-card">
+      <div class="screen-header">
+        <h2 class="screen-title">1. User Authentication & Login Screen</h2>
+        <span class="badge">Security & Access</span>
+      </div>
+      <div class="img-wrapper">
+        <img src="./images/inputs/input_01_user_login.png" alt="User Login Screen">
+      </div>
+      <div class="screen-desc">
+        <p><strong>Input Fields:</strong> Email Address, Account Password (with toggle visibility), Remember Me checkbox.</p>
+        <p><strong>Action Inputs:</strong> "Sign In to CareSync" button, tab switch to registration.</p>
+      </div>
+    </div>
+
+    <!-- Screen 2 -->
+    <div class="screen-card">
+      <div class="screen-header">
+        <h2 class="screen-title">2. Account Registration & Persona Role Selection</h2>
+        <span class="badge">User Management</span>
+      </div>
+      <div class="img-wrapper">
+        <img src="./images/inputs/input_02_user_registration.png" alt="Account Registration Screen">
+      </div>
+      <div class="screen-desc">
+        <p><strong>Input Fields:</strong> Full Name, Email, Password, Confirm Password, Role Selector (Patient vs Caregiver), Terms acceptance.</p>
+      </div>
+    </div>
+
+    <!-- Screen 3 -->
+    <div class="screen-card">
+      <div class="screen-header">
+        <h2 class="screen-title">3. Body Biometrics & Interactive DOB Calendar Picker (Step 1)</h2>
+        <span class="badge">Biometrics Input</span>
+      </div>
+      <div class="img-wrapper">
+        <img src="./images/inputs/input_03_body_biometrics_and_dob.png" alt="Body Biometrics and DOB Picker">
+      </div>
+      <div class="screen-desc">
+        <p><strong>Input Fields:</strong> Biological Sex dropdown, Visual Date of Birth Calendar with decade pills (1940s–2010s) and month/year selectors, Age numeric stepper, Height dual slider (100–230 cm), Weight dual slider (30–200 kg).</p>
+      </div>
+    </div>
+
+    <!-- Screen 4 -->
+    <div class="screen-card">
+      <div class="screen-header">
+        <h2 class="screen-title">4. Physical Activity Level & Health Goals (Step 2)</h2>
+        <span class="badge">AI Nutrition Input</span>
+      </div>
+      <div class="img-wrapper">
+        <img src="./images/inputs/input_04_activity_and_health_goals.png" alt="Activity and Health Goals">
+      </div>
+      <div class="screen-desc">
+        <p><strong>Input Fields:</strong> Physical Activity radio cards (Sedentary, Light, Moderate, Very Active) and Health Goals radio cards (Maintenance, Weight Loss, Chronic Disease Care).</p>
+      </div>
+    </div>
+
+    <!-- Screen 5 -->
+    <div class="screen-card">
+      <div class="screen-header">
+        <h2 class="screen-title">5. Chronic Medical Conditions & Dietary Allergies (Step 3)</h2>
+        <span class="badge">Clinical Safety Input</span>
+      </div>
+      <div class="img-wrapper">
+        <img src="./images/inputs/input_05_medical_conditions_and_allergies.png" alt="Conditions and Allergies">
+      </div>
+      <div class="screen-desc">
+        <p><strong>Input Fields:</strong> Multi-select condition chips (Hypertension, Diabetes, Cholesterol, etc.), Allergy chips (Gluten, Dairy, Nuts, etc.), and Dietary preference dropdown.</p>
+      </div>
+    </div>
+
+    <!-- Screen 6 -->
+    <div class="screen-card">
+      <div class="screen-header">
+        <h2 class="screen-title">6. Neon PostgreSQL Database Connection Settings Modal</h2>
+        <span class="badge">System Configuration</span>
+      </div>
+      <div class="img-wrapper">
+        <img src="./images/inputs/input_06_database_config_settings.png" alt="Database Settings Modal">
+      </div>
+      <div class="screen-desc">
+        <p><strong>Input Fields:</strong> PostgreSQL connection URI input, SSL mode enforcement toggle, and "Test Connection" trigger button.</p>
+      </div>
+    </div>
+
+    <!-- Screen 7 -->
+    <div class="screen-card">
+      <div class="screen-header">
+        <h2 class="screen-title">7. Urgent Medication Reminder & Action Dialog</h2>
+        <span class="badge">Medication Action</span>
+      </div>
+      <div class="img-wrapper">
+        <img src="./images/inputs/input_07_medication_reminder_action.png" alt="Medication Reminder Action Dialog">
+      </div>
+      <div class="screen-desc">
+        <p><strong>Action Inputs:</strong> "✓ Mark as Taken" (logs dose, triggers confetti, decrements stock), "⏰ Snooze 10 Minutes", "✕ Skip Dose" (escalates to caregiver).</p>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
