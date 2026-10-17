@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CareSync — Data Flow Diagrams (DFD)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0b1120;
+      --card-bg: #131c31;
+      --border: #233354;
+      --text-main: #f1f5f9;
+      --text-muted: #94a3b8;
+      --accent-teal: #14b8a6;
+      --accent-blue: #38bdf8;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background-color: var(--bg);
+      color: var(--text-main);
+      padding: 40px 20px;
+      line-height: 1.6;
+    }
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+    header {
+      text-align: center;
+      margin-bottom: 48px;
+      padding-bottom: 24px;
+      border-bottom: 1px solid var(--border);
+    }
+    h1 {
+      font-size: 2.2rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, #38bdf8, #14b8a6);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 12px;
+    }
+    p.lead {
+      color: var(--text-muted);
+      font-size: 1.05rem;
+    }
+    .diagram-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 28px;
+      margin-bottom: 40px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+    }
+    .diagram-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 18px;
+    }
+    .diagram-title {
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: #fff;
+    }
+    .badge {
+      font-size: 0.8rem;
+      font-weight: 700;
+      background: rgba(20, 184, 166, 0.15);
+      color: var(--accent-teal);
+      border: 1px solid rgba(20, 184, 166, 0.3);
+      padding: 4px 12px;
+      border-radius: 20px;
+    }
+    .img-wrapper {
+      width: 100%;
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      background: #000;
+      margin-bottom: 20px;
+    }
+    .img-wrapper img {
+      width: 100%;
+      height: auto;
+      display: block;
+      transition: transform 0.3s ease;
+    }
+    .img-wrapper img:hover {
+      transform: scale(1.01);
+    }
+    .diagram-desc {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+    }
+    .diagram-desc ul {
+      margin: 12px 0 0 20px;
+    }
+    .diagram-desc li {
+      margin-bottom: 6px;
+    }
+    .diagram-desc strong {
+      color: var(--text-main);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>CareSync — Data Flow Diagrams (DFD)</h1>
+      <p class="lead">Visual data flow models illustrating processes, external entities, and data stores.</p>
+    </header>
+
+    <!-- DFD Level 0 -->
+    <div class="diagram-card">
+      <div class="diagram-header">
+        <h2 class="diagram-title">1. DFD Level 0 — Context Diagram</h2>
+        <span class="badge">Context Level</span>
+      </div>
+      <div class="img-wrapper">
+        <img src="./images/dfd_level_0_context_diagram.jpg" alt="DFD Level 0 Context Diagram">
+      </div>
+      <div class="diagram-desc">
+        <p>Depicts the overall system context (Process 0.0) interfacing with external entities: <strong>Patient</strong>, <strong>Caregiver</strong>, <strong>Neon Cloud PostgreSQL Database</strong>, <strong>Google Gemini AI</strong>, and <strong>Web Audio Synthesizer</strong>.</p>
+      </div>
+    </div>
+
+    <!-- DFD Level 1 -->
+    <div class="diagram-card">
+      <div class="diagram-header">
+        <h2 class="diagram-title">2. DFD Level 1 — System Process Decomposition</h2>
+        <span class="badge">Process Flow</span>
+      </div>
+      <div class="img-wrapper">
+        <img src="./images/dfd_level_1_process_flow.jpg" alt="DFD Level 1 Process Flow">
+      </div>
+      <div class="diagram-desc">
+        <p>Decomposes the core system into 5 discrete sub-processes and 4 persistent data stores:</p>
+        <ul>
+          <li><strong>1.0 User Auth & Role Guard</strong> (interfaces with D1: Users & Profiles)</li>
+          <li><strong>2.0 Medicine Scheduler & Alarm Engine</strong> (interfaces with D2: Medicine Schedule & Logs)</li>
+          <li><strong>3.0 Vitals Telemetry & Trend Analytics</strong> (interfaces with D3: Vitals Readings)</li>
+          <li><strong>4.0 Gemini AI Nutrition & Bio Engine</strong> (interfaces with D4: Nutrition Plans)</li>
+          <li><strong>5.0 Caregiver Alert & Remote Portal</strong> (escalates missed doses & SOS warnings)</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- DFD Level 2 -->
+    <div class="diagram-card">
+      <div class="diagram-header">
+        <h2 class="diagram-title">3. DFD Level 2 — Medicine Scheduling & Alarm Dispatch Engine</h2>
+        <span class="badge">Detailed Pipeline</span>
+      </div>
+      <div class="img-wrapper">
+        <img src="./images/dfd_level_2_medicine_engine.jpg" alt="DFD Level 2 Medicine Dispatch Engine">
+      </div>
+      <div class="diagram-desc">
+        <p>Details the inner loop of Process 2.0:</p>
+        <ul>
+          <li><strong>2.1 Check Medicine Schedule Time</strong>: Timer queries scheduled medicines matching current hour/min.</li>
+          <li><strong>2.2 Web Audio Frequency Synthesizer & Alarm Modal</strong>: Triggers harmonic chimes and modal dialog.</li>
+          <li><strong>2.3 Record Patient Adherence</strong>: Captures Taken, Snoozed, or Skipped action into adherence logs.</li>
+          <li><strong>2.4 Decrement Inventory Stock & Refill Check</strong>: Reduces available stock count and triggers refill alert if &lt; 7 days.</li>
+          <li><strong>2.5 Dispatch Caregiver SOS Escalation</strong>: Notifies caregiver upon skipped or missed doses.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
