@@ -1,0 +1,34 @@
+                      3. SYSTEM DESIGN AND DEVELOPMENT
+
+1. Architectural Design
+CareSync follows a modular, three-tier decoupled client-server architecture:
+- Presentation Tier : Responsive Single-Page Application (SPA) built using Semantic HTML5,
+                      Vanilla CSS tokens, and ES6+ JavaScript, bundled for both Web and Electron.
+- Application Tier  : RESTful Node.js/Express.js API server coordinating state, alongside an
+                      autonomous Python 3.14 microservice for chronological health intelligence.
+- Persistence Tier  : Scalable cloud database powered by Neon Serverless PostgreSQL, paired
+                      with a local client storage engine for 100% offline desktop availability.
+
+2. Core Component Design
+The system is decomposed into five primary functional modules:
+- Authentication & Persona Switcher: Role-based route guarding for Patients and Caregivers,
+  utilizing cryptographically secure password hashing (scryptSync with timingSafeEqual).
+- Medication & Audio Engine: Real-time dosing scheduler with synthesized Web Audio API melodic
+  harmonic chimes (C5-E5-G5-C6), visual pill icons, and interactive snooze/confirm controls.
+- Vitals Telemetry & Analytics: Continuous logging for BP, glucose, weight, and temperature,
+  processed through Chart.js data pipelines for real-time trend analytics and clinical alerts.
+- Dual AI & Bio-Engine: Google Gemini AI integration for personalized caloric/macro blueprints,
+  coupled with Python bio-chronology logic computing exact life spans and screening protocols.
+- Digital Vault & Pharmacy Refills: Document archiving with preview modals and automated
+  pill stock fuel gauges triggering 1-click refill orders.
+
+3. Database Schema Design
+The relational database schema is structured into normalized tables:
+- users & patients     : User credentials, linked caregiver relationships, and clinical profiles.
+- medicines & logs     : Prescriptions, dosing intervals, stock counts, and adherence confirmations.
+- vitals & nutrition   : Time-stamped telemetry readings, meal macros, and AI generated diet plans.
+
+4. Development & Security Implementation
+- Security & Validation: Strict CORS policies, input sanitization, and parameterized SQL queries.
+- UI/UX & Accessibility: Glassmorphism visual components, fast decade calendar jumps, and 4
+  color themes (Clinical Light, Midnight Dark, Rose Light, Crimson Dark) for high contrast.
