@@ -1,24 +1,29 @@
                               2. SYSTEM STUDY
 
-The Medicine Reminder and Health Tracker - CareSync system operates by dividing
-operational responsibilities across three core entities: the Patient, the Caregiver,
-and the Automated System Engine. Below is the operational study of each entity:
+HARDWARE REQUIREMENTS:
 
-1. Patient Duties (Primary User Role)
-- Schedule & Adherence: Viewing daily pill schedules and marking doses as Taken, Snoozed, or Skipped.
-- Vital Signs Logging: Recording daily Blood Pressure, Blood Sugar, Weight, Temperature, and symptoms.
-- Health Vault & Appointments: Uploading prescription documents and tracking doctor visits.
-- AI Wellness Engagement: Interacting with Gemini AI for customized nutrition and meal calorie analysis.
+- Processor       : Intel Core i3 or equivalent (minimum)
+- RAM             : 4 GB (minimum), 8 GB recommended
+- Hard Disk       : 500 MB free disk space for application and local data
+- Display         : Minimum 1024x720 resolution monitor or mobile screen
+- Audio Output    : Built-in speakers or headphones (for Web Audio alarm chimes)
+- Internet        : Required for Neon Cloud PostgreSQL mode; optional in offline mode
 
-2. Caregiver Duties (Guardian / Monitor Role)
-- Remote Monitoring: Reviewing real-time adherence rates, recent vitals, and chronic condition profiles.
-- Critical Safety Alerts: Receiving immediate escalation warnings for missed doses and abnormal vitals.
-- Emergency Action: Triggering urgent SOS alarm chimes, simulated direct calls, and reminder SMS.
-- Pharmacy Oversight: Monitoring medication fuel-gauge stocks and coordinating prescription refills.
+SOFTWARE REQUIREMENTS:
 
-3. Automated System Duties (CareSync Core Engine)
-- Melodic Alarm Dispatch: Triggering synthesized Web Audio chimes and browser notifications on schedule.
-- Clinical Analytics & Telemetry: Classifying vitals (AHA BP stages, diabetic ranges) with Chart.js trends.
-- Python Bio-Chronology Engine: Computing exact life spans, zodiac insights, and age screening rules.
-- Data Integrity & Synchronization: Syncing state across Web and Electron via Neon Cloud PostgreSQL.
-- Offline Resilience & Security: Handling local storage fallbacks, password hashing, and session authentication.
+- Operating System : Windows 10/11 (Desktop App) or any OS with a modern browser
+- Runtime          : Node.js v22 or later & Python 3.10+ (Bio-Engine)
+- Web Browser      : Google Chrome, Microsoft Edge, Mozilla Firefox, or Safari
+- Desktop Shell    : Electron v44+ (included as devDependency)
+- Database         : Neon Cloud PostgreSQL (production) or local storage
+- Package Manager  : npm (bundled with Node.js)
+
+TECHNOLOGY STACK:
+
+- Backend          : Node.js, Express.js v5.3.0, Python microservice
+- Frontend         : HTML5, CSS3 Design Tokens, Vanilla JavaScript, Chart.js
+- Database Drivers : @neondatabase/serverless v1.2.0 (PostgreSQL)
+- Artificial Intell: Google Gemini AI API (@google/genai v2.30.0)
+- Authentication   : Node.js crypto module (scryptSync, timingSafeEqual)
+- Audio & UI Assets: Web Audio API (Synthesized chimes), Canvas Confetti, Lucide
+- Deployment       : Vercel (Web/Cloud), Electron Packager (Desktop executable)
